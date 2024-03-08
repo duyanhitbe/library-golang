@@ -1,0 +1,68 @@
+Enum "role_enum" {
+  "ADMIN"
+  "MANAGER"
+}
+
+Table "users" {
+  "id" uuid [pk, not null, default: `uuid_generate_v4()`]
+  "username" NVARCHAR [not null]
+  "password" NVARCHAR [not null]
+  "role" role_enum [not null, default: "MANAGER"]
+  "created_at" TIMESTAMPTZ [not null, default: `now()`]
+  "updated_at" TIMESTAMPTZ [not null, default: `now()`]
+  "deleted_at" TIMESTAMPTZ [not null, default: `now()`]
+}
+
+Table "categories" {
+  "id" uuid [pk, not null, default: `uuid_generate_v4()`]
+  "name" NVARCHAR [not null]
+  "created_at" TIMESTAMPTZ [not null, default: `now()`]
+  "updated_at" TIMESTAMPTZ [not null, default: `now()`]
+  "deleted_at" TIMESTAMPTZ [not null, default: `now()`]
+}
+
+Table "books" {
+  "id" uuid [pk, not null, default: `uuid_generate_v4()`]
+  "category_id" uuid [not null]
+  "book_info_id" uuid [not null]
+  "created_at" TIMESTAMPTZ [not null, default: `now()`]
+  "updated_at" TIMESTAMPTZ [not null, default: `now()`]
+  "deleted_at" TIMESTAMPTZ [not null, default: `now()`]
+}
+
+Table "book_infos" {
+  "id" uuid [pk, not null, default: `uuid_generate_v4()`]
+  "name" NVARCHAR [not null]
+  "author" NVARCHAR [not null]
+  "publication_date" TIMESTAMPTZ [not null]
+  "created_at" TIMESTAMPTZ [not null, default: `now()`]
+  "updated_at" TIMESTAMPTZ [not null, default: `now()`]
+  "deleted_at" TIMESTAMPTZ [not null, default: `now()`]
+}
+
+Table "borrowers" {
+  "id" uuid [pk, not null, default: `uuid_generate_v4()`]
+  "name" NVARCHAR [not null]
+  "phone" NVARCHAR [not null]
+  "address" NVARCHAR [not null]
+  "created_at" TIMESTAMPTZ [not null, default: `now()`]
+  "updated_at" TIMESTAMPTZ [not null, default: `now()`]
+  "deleted_at" TIMESTAMPTZ [not null, default: `now()`]
+}
+
+Table "book_borrower" {
+  "borrower_id" uuid [not null]
+  "book_id" uuid [not null]
+
+Indexes {
+  (borrower_id, book_id) [pk]
+}
+}
+
+Ref:"categories"."id" < "books"."category_id"
+
+Ref:"book_infos"."id" < "books"."book_info_id"
+
+Ref:"borrowers"."id" < "book_borrower"."borrower_id"
+
+Ref:"books"."id" < "book_borrower"."book_id"
