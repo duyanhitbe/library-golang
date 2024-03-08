@@ -3,6 +3,7 @@ module github.com/duyanhitbe/library-golang
 go 1.21.0
 
 require (
+	github.com/alexedwards/argon2id v1.0.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
