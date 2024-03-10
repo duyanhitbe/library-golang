@@ -3,19 +3,19 @@ package config
 import "os"
 
 type Env struct {
-	DriverName    string
-	DataSource    string
-	ServerAddress string
+	DriverName        string
+	DataSource        string
+	HttpServerAddress string
 }
 
 func NewEnv() *Env {
 	driverName := os.Getenv("DRIVER_NAME")
 	dataSource := os.Getenv("DATA_SOURCE")
-	serverAddress := os.Getenv("SERVER_ADDRESS")
+	httpServerAddress := os.Getenv("HTTP_SERVER_ADDRESS")
 
 	return &Env{
-		DriverName:    driverName,
-		DataSource:    dataSource,
-		ServerAddress: serverAddress,
+		DriverName:        driverName,
+		DataSource:        dataSource,
+		HttpServerAddress: httpServerAddress,
 	}
 }

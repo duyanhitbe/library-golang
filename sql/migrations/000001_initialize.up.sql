@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TYPE "role_enum" AS ENUM (
   'ADMIN',
   'MANAGER'
@@ -10,7 +12,8 @@ CREATE TABLE "users" (
   "role" role_enum NOT NULL DEFAULT 'MANAGER',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
-  "deleted_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
+  "deleted_at" TIMESTAMPTZ,
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE "categories" (
@@ -18,7 +21,8 @@ CREATE TABLE "categories" (
   "name" VARCHAR NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
-  "deleted_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
+  "deleted_at" TIMESTAMPTZ,
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE "books" (
@@ -27,7 +31,8 @@ CREATE TABLE "books" (
   "book_info_id" uuid NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
-  "deleted_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
+  "deleted_at" TIMESTAMPTZ,
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE "book_infos" (
@@ -37,7 +42,8 @@ CREATE TABLE "book_infos" (
   "publication_date" TIMESTAMPTZ NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
-  "deleted_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
+  "deleted_at" TIMESTAMPTZ,
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE "borrowers" (
@@ -47,7 +53,8 @@ CREATE TABLE "borrowers" (
   "address" VARCHAR NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
-  "deleted_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
+  "deleted_at" TIMESTAMPTZ,
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE "book_borrower" (

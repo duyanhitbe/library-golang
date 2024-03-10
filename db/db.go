@@ -7,6 +7,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"fmt"
 )
 
 type DBTX interface {
@@ -20,12 +21,118 @@ func New(db DBTX) *Queries {
 	return &Queries{db: db}
 }
 
+func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
+	q := Queries{db: db}
+	var err error
+	if q.countCategoryStmt, err = db.PrepareContext(ctx, countCategory); err != nil {
+		return nil, fmt.Errorf("error preparing query CountCategory: %w", err)
+	}
+	if q.createCategoryStmt, err = db.PrepareContext(ctx, createCategory); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateCategory: %w", err)
+	}
+	if q.deleteOneCategoryByIdStmt, err = db.PrepareContext(ctx, deleteOneCategoryById); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteOneCategoryById: %w", err)
+	}
+	if q.getOneCategoryByIdStmt, err = db.PrepareContext(ctx, getOneCategoryById); err != nil {
+		return nil, fmt.Errorf("error preparing query GetOneCategoryById: %w", err)
+	}
+	if q.listCategoryStmt, err = db.PrepareContext(ctx, listCategory); err != nil {
+		return nil, fmt.Errorf("error preparing query ListCategory: %w", err)
+	}
+	if q.updateOneCategoryByIdStmt, err = db.PrepareContext(ctx, updateOneCategoryById); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateOneCategoryById: %w", err)
+	}
+	return &q, nil
+}
+
+func (q *Queries) Close() error {
+	var err error
+	if q.countCategoryStmt != nil {
+		if cerr := q.countCategoryStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing countCategoryStmt: %w", cerr)
+		}
+	}
+	if q.createCategoryStmt != nil {
+		if cerr := q.createCategoryStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createCategoryStmt: %w", cerr)
+		}
+	}
+	if q.deleteOneCategoryByIdStmt != nil {
+		if cerr := q.deleteOneCategoryByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteOneCategoryByIdStmt: %w", cerr)
+		}
+	}
+	if q.getOneCategoryByIdStmt != nil {
+		if cerr := q.getOneCategoryByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getOneCategoryByIdStmt: %w", cerr)
+		}
+	}
+	if q.listCategoryStmt != nil {
+		if cerr := q.listCategoryStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing listCategoryStmt: %w", cerr)
+		}
+	}
+	if q.updateOneCategoryByIdStmt != nil {
+		if cerr := q.updateOneCategoryByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateOneCategoryByIdStmt: %w", cerr)
+		}
+	}
+	return err
+}
+
+func (q *Queries) exec(ctx context.Context, stmt *sql.Stmt, query string, args ...interface{}) (sql.Result, error) {
+	switch {
+	case stmt != nil && q.tx != nil:
+		return q.tx.StmtContext(ctx, stmt).ExecContext(ctx, args...)
+	case stmt != nil:
+		return stmt.ExecContext(ctx, args...)
+	default:
+		return q.db.ExecContext(ctx, query, args...)
+	}
+}
+
+func (q *Queries) query(ctx context.Context, stmt *sql.Stmt, query string, args ...interface{}) (*sql.Rows, error) {
+	switch {
+	case stmt != nil && q.tx != nil:
+		return q.tx.StmtContext(ctx, stmt).QueryContext(ctx, args...)
+	case stmt != nil:
+		return stmt.QueryContext(ctx, args...)
+	default:
+		return q.db.QueryContext(ctx, query, args...)
+	}
+}
+
+func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, args ...interface{}) *sql.Row {
+	switch {
+	case stmt != nil && q.tx != nil:
+		return q.tx.StmtContext(ctx, stmt).QueryRowContext(ctx, args...)
+	case stmt != nil:
+		return stmt.QueryRowContext(ctx, args...)
+	default:
+		return q.db.QueryRowContext(ctx, query, args...)
+	}
+}
+
 type Queries struct {
-	db DBTX
+	db                        DBTX
+	tx                        *sql.Tx
+	countCategoryStmt         *sql.Stmt
+	createCategoryStmt        *sql.Stmt
+	deleteOneCategoryByIdStmt *sql.Stmt
+	getOneCategoryByIdStmt    *sql.Stmt
+	listCategoryStmt          *sql.Stmt
+	updateOneCategoryByIdStmt *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db: tx,
+		db:                        tx,
+		tx:                        tx,
+		countCategoryStmt:         q.countCategoryStmt,
+		createCategoryStmt:        q.createCategoryStmt,
+		deleteOneCategoryByIdStmt: q.deleteOneCategoryByIdStmt,
+		getOneCategoryByIdStmt:    q.getOneCategoryByIdStmt,
+		listCategoryStmt:          q.listCategoryStmt,
+		updateOneCategoryByIdStmt: q.updateOneCategoryByIdStmt,
 	}
 }

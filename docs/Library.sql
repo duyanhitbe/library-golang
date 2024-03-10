@@ -5,20 +5,22 @@ CREATE TYPE "role_enum" AS ENUM (
 
 CREATE TABLE "users" (
   "id" uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-  "username" NVARCHAR NOT NULL,
-  "password" NVARCHAR NOT NULL,
+  "username" VARCHAR NOT NULL,
+  "password" VARCHAR NOT NULL,
   "role" role_enum NOT NULL DEFAULT 'MANAGER',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
-  "deleted_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
+  "deleted_at" TIMESTAMPTZ,
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE "categories" (
   "id" uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-  "name" NVARCHAR NOT NULL,
+  "name" VARCHAR NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
-  "deleted_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
+  "deleted_at" TIMESTAMPTZ,
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE "books" (
@@ -27,27 +29,30 @@ CREATE TABLE "books" (
   "book_info_id" uuid NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
-  "deleted_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
+  "deleted_at" TIMESTAMPTZ,
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE "book_infos" (
   "id" uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-  "name" NVARCHAR NOT NULL,
-  "author" NVARCHAR NOT NULL,
+  "name" VARCHAR NOT NULL,
+  "author" VARCHAR NOT NULL,
   "publication_date" TIMESTAMPTZ NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
-  "deleted_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
+  "deleted_at" TIMESTAMPTZ,
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE "borrowers" (
   "id" uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-  "name" NVARCHAR NOT NULL,
-  "phone" NVARCHAR NOT NULL,
-  "address" NVARCHAR NOT NULL,
+  "name" VARCHAR NOT NULL,
+  "phone" VARCHAR NOT NULL,
+  "address" VARCHAR NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
-  "deleted_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
+  "deleted_at" TIMESTAMPTZ,
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE "book_borrower" (

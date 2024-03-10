@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/duyanhitbe/library-golang/api"
+	"github.com/duyanhitbe/library-golang/apis"
 	"github.com/duyanhitbe/library-golang/config"
 	_ "github.com/lib/pq"
 )
@@ -16,8 +16,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	errPing := db.Ping()
+	if errPing != nil {
+		log.Fatal(errPing)
+	}
 
-	server := api.NewServer(env, db)
+	server := apis.NewHttpServer(env, db)
 
 	err = server.Start()
 	if err != nil {
