@@ -1,7 +1,6 @@
 package apis
 
 import (
-	"github.com/duyanhitbe/library-golang/context"
 	"github.com/duyanhitbe/library-golang/db"
 	"github.com/gin-gonic/gin"
 )
@@ -12,23 +11,21 @@ type CreateCategoryRequest struct {
 
 func (server *HttpServer) CreateCategory(ctx *gin.Context) {
 	var req CreateCategoryRequest
-	if ok := context.BindJSON(ctx, &req); !ok {
+	if ok := server.BindJSON(&req); !ok {
 		return
 	}
 
 	id, err := server.store.CreateCategory(ctx, req.Name)
 	if err != nil {
-		exception := context.InternalServerException(err)
-		context.ThrowException(ctx, exception)
+		server.ThrowInternalServerException(err)
 		return
 	}
 
-	response := context.OkResponse(id)
-	context.Response(ctx, response)
+	server.OkResponse(id)
 }
 
 func (server *HttpServer) ListCategory(ctx *gin.Context) {
-	req := context.BindPagination(ctx)
+	req := server.BindPagination()
 	if req == nil {
 		return
 	}
@@ -39,43 +36,38 @@ func (server *HttpServer) ListCategory(ctx *gin.Context) {
 	}
 	categories, err := server.store.ListCategory(ctx, params)
 	if err != nil {
-		context.ThrowDbException(context.DbException{
-			Ctx: ctx,
+		server.ThrowDbException(DbException{
 			Err: err,
 		})
 		return
 	}
 	total, err := server.store.CountCategory(ctx)
 	if err != nil {
-		context.ThrowDbException(context.DbException{
-			Ctx: ctx,
+		server.ThrowDbException(DbException{
 			Err: err,
 		})
 		return
 	}
 
-	response := context.PaginatedResponse(req, categories, total)
-	context.Response(ctx, response)
+	server.PaginatedResponse(req, categories, total)
 }
 
 func (server *HttpServer) GetOneCategoryById(ctx *gin.Context) {
-	id, ok := context.BindID(ctx)
+	id, ok := server.BindID()
 	if !ok {
 		return
 	}
 
 	category, err := server.store.GetOneCategoryById(ctx, *id)
 	if err != nil {
-		context.ThrowDbException(context.DbException{
-			Ctx:             ctx,
+		server.ThrowDbException(DbException{
 			Err:             err,
 			NotFoundMessage: "Category not found",
 		})
 		return
 	}
 
-	response := context.OkResponse(category)
-	context.Response(ctx, response)
+	server.OkResponse(category)
 }
 
 type UpdateOneCategoryByIdRequest struct {
@@ -84,10 +76,10 @@ type UpdateOneCategoryByIdRequest struct {
 
 func (server *HttpServer) UpdateOneCategoryById(ctx *gin.Context) {
 	var req UpdateOneCategoryByIdRequest
-	if ok := context.BindJSON(ctx, &req); !ok {
+	if ok := server.BindJSON(&req); !ok {
 		return
 	}
-	id, ok := context.BindID(ctx)
+	id, ok := server.BindID()
 	if !ok {
 		return
 	}
@@ -98,34 +90,30 @@ func (server *HttpServer) UpdateOneCategoryById(ctx *gin.Context) {
 	}
 	category, err := server.store.UpdateOneCategoryById(ctx, params)
 	if err != nil {
-		context.ThrowDbException(context.DbException{
-			Ctx:             ctx,
+		server.ThrowDbException(DbException{
 			Err:             err,
 			NotFoundMessage: "Category not found",
 		})
 		return
 	}
 
-	response := context.OkResponse(category)
-	context.Response(ctx, response)
+	server.OkResponse(category)
 }
 
 func (server *HttpServer) DeleteOneCategoryById(ctx *gin.Context) {
-	id, ok := context.BindID(ctx)
+	id, ok := server.BindID()
 	if !ok {
 		return
 	}
 
 	category, err := server.store.DeleteOneCategoryById(ctx, *id)
 	if err != nil {
-		context.ThrowDbException(context.DbException{
-			Ctx:             ctx,
+		server.ThrowDbException(DbException{
 			Err:             err,
 			NotFoundMessage: "Category not found",
 		})
 		return
 	}
 
-	response := context.OkResponse(category)
-	context.Response(ctx, response)
+	server.OkResponse(category)
 }

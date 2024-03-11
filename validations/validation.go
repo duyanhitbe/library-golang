@@ -1,14 +1,17 @@
-package context
+package validations
 
 import (
 	"errors"
 
-	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
 )
 
-func getValidationError(err error) ([]ValidationError, bool) {
+type ValidationError struct {
+	Field string `json:"field"`
+	Error string `json:"error"`
+}
+
+func GetValidationError(err error) ([]ValidationError, bool) {
 	var ve validator.ValidationErrors
 	if errors.As(err, &ve) {
 		out := make([]ValidationError, len(ve))
@@ -50,14 +53,4 @@ func msgForTag(field, tag, params, fieldType string) string {
 	}
 
 	return ""
-}
-
-func ParseUUID(ctx *gin.Context, id string) *uuid.UUID {
-	result, err := uuid.Parse(id)
-	if err != nil {
-		exception := BadRequestException(err)
-		ThrowException(ctx, exception)
-		return nil
-	}
-	return &result
 }

@@ -1,9 +1,7 @@
-package context
+package apis
 
 import (
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -24,39 +22,39 @@ type SuccessResponse struct {
 	Pagination PaginationResponse `json:"pagination"`
 }
 
-func Response(ctx *gin.Context, response *SuccessResponse) {
-	ctx.JSON(response.StatusCode, response)
+func (server *HttpServer) Response(response *SuccessResponse) {
+	server.ctx.JSON(response.StatusCode, response)
 }
 
-func CreatedResponse(data interface{}) *SuccessResponse {
-	return &SuccessResponse{
+func (server *HttpServer) CreatedResponse(data interface{}) {
+	server.Response(&SuccessResponse{
 		StatusCode: http.StatusCreated,
 		Success:    true,
 		Message:    SuccessMessage,
 		Data:       data,
-	}
+	})
 }
 
-func OkResponse(data interface{}) *SuccessResponse {
-	return &SuccessResponse{
+func (server *HttpServer) OkResponse(data interface{}) {
+	server.Response(&SuccessResponse{
 		StatusCode: http.StatusOK,
 		Success:    true,
 		Message:    SuccessMessage,
 		Data:       data,
-	}
+	})
 }
 
-func PaginatedResponse(req *ListRequest, data interface{}, total int64) *SuccessResponse {
+func (server *HttpServer) PaginatedResponse(req *ListRequest, data interface{}, total int64) {
 	pagination := PaginationResponse{
 		Limit: req.Limit,
 		Page:  req.Page,
 		Total: total,
 	}
-	return &SuccessResponse{
+	server.Response(&SuccessResponse{
 		StatusCode: http.StatusOK,
 		Success:    true,
 		Message:    SuccessMessage,
 		Data:       data,
 		Pagination: pagination,
-	}
+	})
 }
