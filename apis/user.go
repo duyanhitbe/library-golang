@@ -17,9 +17,14 @@ func (server *HttpServer) CreateUser(ctx *gin.Context) {
 		return
 	}
 
+	hashedPassword, err := server.hash.Hash(req.Password)
+	if err != nil {
+		server.ThrowInternalServerException(err)
+		return
+	}
 	user, err := server.store.CreateUser(ctx, db.CreateUserParams{
 		Username: req.Username,
-		Password: req.Password,
+		Password: hashedPassword,
 		Role:     db.RoleEnum(req.Role),
 	})
 	if err != nil {
@@ -86,7 +91,6 @@ func (server *HttpServer) GetOneUserById(ctx *gin.Context) {
 
 type UpdateOneUserByIdRequest struct {
 	Username string `json:"username"`
-	Password string `json:"password"`
 	Role     string `json:"role"`
 }
 
@@ -103,7 +107,6 @@ func (server *HttpServer) UpdateOneUserById(ctx *gin.Context) {
 	params := db.UpdateOneUserByIdParams{
 		ID:       *id,
 		Username: req.Username,
-		Password: req.Password,
 		Role:     db.RoleEnum(req.Role),
 	}
 	user, err := server.store.UpdateOneUserById(ctx, params)

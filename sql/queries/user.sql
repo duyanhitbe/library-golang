@@ -20,7 +20,7 @@ WHERE "id" = $1 AND "deleted_at" IS NULL;
 
 -- name: UpdateOneUserById :one
 UPDATE "users"
-SET "username" = $2, "password" = $3, "role" = $4
+SET "username" = $2, "role" = $3
 WHERE "id" = $1 AND "deleted_at" IS NULL
 RETURNING *;
 

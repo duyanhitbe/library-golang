@@ -141,7 +141,7 @@ func (q *Queries) ListUser(ctx context.Context, arg ListUserParams) ([]*User, er
 
 const updateOneUserById = `-- name: UpdateOneUserById :one
 UPDATE "users"
-SET "username" = $2, "password" = $3, "role" = $4
+SET "username" = $2, "role" = $3
 WHERE "id" = $1 AND "deleted_at" IS NULL
 RETURNING id, username, password, role, created_at, updated_at, deleted_at, is_active
 `
@@ -149,17 +149,11 @@ RETURNING id, username, password, role, created_at, updated_at, deleted_at, is_a
 type UpdateOneUserByIdParams struct {
 	ID       uuid.UUID `json:"id"`
 	Username string    `json:"username"`
-	Password string    `json:"password"`
 	Role     RoleEnum  `json:"role"`
 }
 
 func (q *Queries) UpdateOneUserById(ctx context.Context, arg UpdateOneUserByIdParams) (*User, error) {
-	row := q.queryRow(ctx, q.updateOneUserByIdStmt, updateOneUserById,
-		arg.ID,
-		arg.Username,
-		arg.Password,
-		arg.Role,
-	)
+	row := q.queryRow(ctx, q.updateOneUserByIdStmt, updateOneUserById, arg.ID, arg.Username, arg.Role)
 	var i User
 	err := row.Scan(
 		&i.ID,

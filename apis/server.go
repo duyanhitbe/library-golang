@@ -5,6 +5,7 @@ import (
 
 	"github.com/duyanhitbe/library-golang/config"
 	"github.com/duyanhitbe/library-golang/db"
+	"github.com/duyanhitbe/library-golang/hash"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,15 +14,18 @@ type HttpServer struct {
 	store  db.Store
 	env    *config.Env
 	ctx    *gin.Context
+	hash   hash.Hash
 }
 
 func NewHttpServer(env *config.Env, database *sql.DB) *HttpServer {
 	engine := gin.Default()
 	store := db.NewStore(database)
+	hash := hash.NewArgon2()
 	return &HttpServer{
 		engine: engine,
 		store:  store,
 		env:    env,
+		hash:   hash,
 	}
 }
 
