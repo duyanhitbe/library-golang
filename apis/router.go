@@ -8,6 +8,7 @@ import (
 
 func (server *HttpServer) initRouter() {
 	server.engine.Use(server.setCtx())
+	server.engine.Use(logger)
 	server.engine.GET("/", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": "Welcome to Library",
