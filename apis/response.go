@@ -2,6 +2,10 @@ package apis
 
 import (
 	"net/http"
+	"time"
+
+	"github.com/duyanhitbe/library-golang/db"
+	"github.com/google/uuid"
 )
 
 const (
@@ -15,10 +19,10 @@ type PaginationResponse struct {
 }
 
 type SuccessResponse struct {
-	StatusCode int                `json:"status_code"`
-	Success    bool               `json:"success"`
-	Message    string             `json:"message"`
-	Data       interface{}        `json:"data"`
+	StatusCode int                 `json:"status_code"`
+	Success    bool                `json:"success"`
+	Message    string              `json:"message"`
+	Data       interface{}         `json:"data"`
 	Pagination *PaginationResponse `json:"pagination"`
 }
 
@@ -57,4 +61,49 @@ func (server *HttpServer) PaginatedResponse(req *ListRequest, data interface{}, 
 		Data:       data,
 		Pagination: pagination,
 	})
+}
+
+type BookResponse struct {
+	Book     *db.Book     `json:"book"`
+	Category *db.Category `json:"category"`
+	BookInfo *db.BookInfo `json:"book_info"`
+}
+
+func (server *HttpServer) parseBookResponse(book *db.Book) (*BookResponse, error) {
+	bookInfo, err := server.store.GetOneBookInfoById(server.ctx, book.BookInfoID)
+	if err != nil {
+		return nil, err
+	}
+	category, err := server.store.GetOneCategoryById(server.ctx, book.CategoryID)
+	if err != nil {
+		return nil, err
+	}
+	rsp := BookResponse{
+		Book:     book,
+		Category: category,
+		BookInfo: bookInfo,
+	}
+	return &rsp, nil
+}
+
+type UserResponse struct {
+	ID        uuid.UUID   `json:"id"`
+	Username  string      `json:"username"`
+	Role      db.RoleEnum `json:"role"`
+	CreatedAt time.Time   `json:"created_at"`
+	UpdatedAt time.Time   `json:"updated_at"`
+	DeletedAt *time.Time  `json:"deleted_at"`
+	IsActive  bool        `json:"is_active"`
+}
+
+func (server *HttpServer) parseUserResponse(user *db.User) *UserResponse {
+	return &UserResponse{
+		ID:        user.ID,
+		Username:  user.Username,
+		Role:      user.Role,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		DeletedAt: user.DeletedAt,
+		IsActive:  user.IsActive,
+	}
 }

@@ -17,29 +17,6 @@ type CreateBookRequest struct {
 	PublicationDate time.Time `json:"publication_date"`
 }
 
-type BookResponse struct {
-	Book     *db.Book     `json:"book"`
-	Category *db.Category `json:"category"`
-	BookInfo *db.BookInfo `json:"book_info"`
-}
-
-func (server *HttpServer) parseBookResponse(book *db.Book) (*BookResponse, error) {
-	bookInfo, err := server.store.GetOneBookInfoById(server.ctx, book.BookInfoID)
-	if err != nil {
-		return nil, err
-	}
-	category, err := server.store.GetOneCategoryById(server.ctx, book.CategoryID)
-	if err != nil {
-		return nil, err
-	}
-	rsp := BookResponse{
-		Book:     book,
-		Category: category,
-		BookInfo: bookInfo,
-	}
-	return &rsp, nil
-}
-
 func (server *HttpServer) CreateBook(ctx *gin.Context) {
 	var req CreateBookRequest
 	if ok := server.BindJSON(&req); !ok {
