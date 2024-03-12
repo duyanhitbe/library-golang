@@ -15,13 +15,13 @@ func (server *HttpServer) CreateCategory(ctx *gin.Context) {
 		return
 	}
 
-	id, err := server.store.CreateCategory(ctx, req.Name)
+	category, err := server.store.CreateCategory(ctx, req.Name)
 	if err != nil {
 		server.ThrowInternalServerException(err)
 		return
 	}
 
-	server.OkResponse(id)
+	server.OkResponse(category)
 }
 
 func (server *HttpServer) ListCategory(ctx *gin.Context) {

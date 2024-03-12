@@ -11,11 +11,23 @@ import (
 )
 
 type Querier interface {
+	CountBook(ctx context.Context) (int64, error)
+	CountBookInfo(ctx context.Context) (int64, error)
 	CountCategory(ctx context.Context) (int64, error)
+	CreateBook(ctx context.Context, arg CreateBookParams) (*Book, error)
+	CreateBookInfo(ctx context.Context, arg CreateBookInfoParams) (*BookInfo, error)
 	CreateCategory(ctx context.Context, name string) (*Category, error)
+	DeleteOneBookById(ctx context.Context, id uuid.UUID) (*Book, error)
+	DeleteOneBookInfoById(ctx context.Context, id uuid.UUID) (*BookInfo, error)
 	DeleteOneCategoryById(ctx context.Context, id uuid.UUID) (*Category, error)
+	GetOneBookById(ctx context.Context, id uuid.UUID) (*Book, error)
+	GetOneBookInfoById(ctx context.Context, id uuid.UUID) (*BookInfo, error)
 	GetOneCategoryById(ctx context.Context, id uuid.UUID) (*Category, error)
+	ListBook(ctx context.Context, arg ListBookParams) ([]*Book, error)
+	ListBookInfo(ctx context.Context, arg ListBookInfoParams) ([]*BookInfo, error)
 	ListCategory(ctx context.Context, arg ListCategoryParams) ([]*Category, error)
+	UpdateOneBookById(ctx context.Context, arg UpdateOneBookByIdParams) (*Book, error)
+	UpdateOneBookInfoById(ctx context.Context, arg UpdateOneBookInfoByIdParams) (*BookInfo, error)
 	UpdateOneCategoryById(ctx context.Context, arg UpdateOneCategoryByIdParams) (*Category, error)
 }
 

@@ -127,18 +127,18 @@ func (q *Queries) ListCategory(ctx context.Context, arg ListCategoryParams) ([]*
 
 const updateOneCategoryById = `-- name: UpdateOneCategoryById :one
 UPDATE "categories"
-SET "name" = $1
-WHERE "id" = $2 AND "deleted_at" IS NULL
+SET "name" = $2
+WHERE "id" = $1 AND "deleted_at" IS NULL
 RETURNING id, name, created_at, updated_at, deleted_at, is_active
 `
 
 type UpdateOneCategoryByIdParams struct {
-	Name string    `json:"name"`
 	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
 }
 
 func (q *Queries) UpdateOneCategoryById(ctx context.Context, arg UpdateOneCategoryByIdParams) (*Category, error) {
-	row := q.queryRow(ctx, q.updateOneCategoryByIdStmt, updateOneCategoryById, arg.Name, arg.ID)
+	row := q.queryRow(ctx, q.updateOneCategoryByIdStmt, updateOneCategoryById, arg.ID, arg.Name)
 	var i Category
 	err := row.Scan(
 		&i.ID,

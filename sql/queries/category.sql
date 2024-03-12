@@ -20,8 +20,8 @@ WHERE "id" = $1 AND "deleted_at" IS NULL;
 
 -- name: UpdateOneCategoryById :one
 UPDATE "categories"
-SET "name" = $1
-WHERE "id" = $2 AND "deleted_at" IS NULL
+SET "name" = $2
+WHERE "id" = $1 AND "deleted_at" IS NULL
 RETURNING *;
 
 -- name: DeleteOneCategoryById :one
