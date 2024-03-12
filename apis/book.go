@@ -1,9 +1,11 @@
 package apis
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/duyanhitbe/library-golang/db"
+	"github.com/duyanhitbe/library-golang/validations"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -227,4 +229,170 @@ func (server *HttpServer) DeleteOneBookById(ctx *gin.Context) {
 		})
 	}
 	server.OkResponse(rsp)
+}
+
+type BorrowBookRequest struct {
+	BookID  string `json:"book_id"`
+	Name    string `json:"name"`
+	Phone   string `json:"phone"`
+	Address string `json:"address"`
+}
+
+type BorrowBookResponse struct {
+	*BookResponse
+	Borrower *db.Borrower `json:"borrower"`
+}
+
+func (server *HttpServer) BorrowBook(ctx *gin.Context) {
+	var req BorrowBookRequest
+	if ok := server.BindJSON(&req); !ok {
+		return
+	}
+	//Parse bookID to uuid
+	bookID, err := validations.ParseUUID(req.BookID)
+	if err != nil {
+		server.ThrowBadRequestException(err)
+	}
+	//Get one book by id
+	book, err := server.store.GetOneBookById(ctx, *bookID)
+	if err != nil {
+		server.ThrowDbException(DbException{
+			Err:             err,
+			NotFoundMessage: "Book not found",
+		})
+		return
+	}
+	//Get one or create new borrower
+	//If exist borrower, update borrower info
+	borrower, err := server.store.GetOneBorrowerByPhone(ctx, req.Phone)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			borrower, err = server.store.CreateBorrower(ctx, db.CreateBorrowerParams{
+				Name:    req.Name,
+				Phone:   req.Phone,
+				Address: req.Address,
+			})
+			if err != nil {
+				server.ThrowDbException(DbException{
+					Err: err,
+				})
+				return
+			}
+		} else {
+			server.ThrowDbException(DbException{
+				Err: err,
+			})
+			return
+		}
+	} else {
+		borrower, err = server.store.UpdateOneBorrowerById(ctx, db.UpdateOneBorrowerByIdParams{
+			ID:      borrower.ID,
+			Name:    req.Name,
+			Phone:   req.Phone,
+			Address: req.Address,
+		})
+		if err != nil {
+			server.ThrowDbException(DbException{
+				Err: err,
+			})
+			return
+		}
+	}
+
+	bookBorrower, err := server.store.GetOneBookBorrower(ctx, db.GetOneBookBorrowerParams{
+		BorrowerID: borrower.ID,
+		BookID:     book.ID,
+	})
+	if err != nil {
+		if err != sql.ErrNoRows {
+			server.ThrowDbException(DbException{
+				Err: err,
+			})
+			return
+		}
+	}
+	if bookBorrower == nil {
+		_, err = server.store.CreateBookBorrower(ctx, db.CreateBookBorrowerParams{
+			BorrowerID: borrower.ID,
+			BookID:     book.ID,
+		})
+		if err != nil {
+			server.ThrowDbException(DbException{
+				Err: err,
+			})
+			return
+		}
+	}
+
+	bookRsp, err := server.parseBookResponse(book)
+	if err != nil {
+		server.ThrowDbException(DbException{
+			Err: err,
+		})
+		return
+	}
+	rsp := BorrowBookResponse{
+		BookResponse: bookRsp,
+		Borrower:     borrower,
+	}
+	server.OkResponse(rsp)
+}
+
+func (server *HttpServer) ListBookByBorrowerId(ctx *gin.Context) {
+	borrowerID, ok := server.BindID()
+	if !ok {
+		return
+	}
+
+	req := server.BindPagination()
+	if req == nil {
+		return
+	}
+
+	bookBorrowers, err := server.store.GetAllBookBorrowerByBorrowerId(ctx, *borrowerID)
+	if err != nil {
+		server.ThrowDbException(DbException{
+			Err: err,
+		})
+		return
+	}
+	bookIds := []uuid.UUID{}
+	for _, bookBorrower := range bookBorrowers {
+		bookIds = append(bookIds, bookBorrower.BookID)
+	}
+
+	books, err := server.store.ListBookByIds(ctx, db.ListBookByIdsParams{
+		Limit:  int32(req.Limit),
+		Offset: int32(req.Offset),
+		Ids:    bookIds,
+	})
+	if err != nil {
+		server.ThrowDbException(DbException{
+			Err: err,
+		})
+		return
+	}
+
+	result := []*BookResponse{}
+
+	for _, book := range books {
+		rsp, err := server.parseBookResponse(book)
+		if err != nil {
+			server.ThrowDbException(DbException{
+				Err: err,
+			})
+			return
+		}
+		result = append(result, rsp)
+	}
+
+	total, err := server.store.CountBookByIds(ctx, bookIds)
+	if err != nil {
+		server.ThrowDbException(DbException{
+			Err: err,
+		})
+		return
+	}
+
+	server.PaginatedResponse(req, result, total)
 }

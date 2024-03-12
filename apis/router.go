@@ -16,6 +16,7 @@ func (server *HttpServer) initRouter() {
 	})
 	server.initCategoryRouter()
 	server.initBookRouter()
+	server.initBorrowerRouter()
 }
 
 func (server *HttpServer) initCategoryRouter() {
@@ -36,10 +37,21 @@ func (server *HttpServer) initBookRouter() {
 	{
 		{
 			v1.POST("/", server.CreateBook)
+			v1.POST("/borrow", server.BorrowBook)
+			v1.GET("/borrow/:id", server.ListBookByBorrowerId)
 			v1.GET("/", server.ListBook)
 			v1.GET("/:id", server.GetOneBookById)
 			v1.PATCH("/:id", server.UpdateOneBookById)
 			v1.DELETE("/:id", server.DeleteOneBookById)
+		}
+	}
+}
+
+func (server *HttpServer) initBorrowerRouter() {
+	v1 := server.engine.Group("/v1/borrower")
+	{
+		{
+			v1.GET("/book/:id", server.ListBorrowerByBookId)
 		}
 	}
 }

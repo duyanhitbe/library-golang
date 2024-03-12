@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 const countBook = `-- name: CountBook :one
@@ -18,6 +19,18 @@ WHERE "deleted_at" IS NULL
 
 func (q *Queries) CountBook(ctx context.Context) (int64, error) {
 	row := q.queryRow(ctx, q.countBookStmt, countBook)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const countBookByIds = `-- name: CountBookByIds :one
+SELECT COUNT(*) FROM "books"
+WHERE "id" = ANY($1::uuid[]) AND "deleted_at" IS NULL
+`
+
+func (q *Queries) CountBookByIds(ctx context.Context, ids []uuid.UUID) (int64, error) {
+	row := q.queryRow(ctx, q.countBookByIdsStmt, countBookByIds, pq.Array(ids))
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -105,6 +118,50 @@ type ListBookParams struct {
 
 func (q *Queries) ListBook(ctx context.Context, arg ListBookParams) ([]*Book, error) {
 	rows, err := q.query(ctx, q.listBookStmt, listBook, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []*Book{}
+	for rows.Next() {
+		var i Book
+		if err := rows.Scan(
+			&i.ID,
+			&i.CategoryID,
+			&i.BookInfoID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.IsActive,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listBookByIds = `-- name: ListBookByIds :many
+SELECT id, category_id, book_info_id, created_at, updated_at, deleted_at, is_active FROM "books"
+WHERE "id" = ANY($3::uuid[]) AND "deleted_at" IS NULL
+LIMIT $1
+OFFSET $2
+`
+
+type ListBookByIdsParams struct {
+	Limit  int32       `json:"limit"`
+	Offset int32       `json:"offset"`
+	Ids    []uuid.UUID `json:"ids"`
+}
+
+func (q *Queries) ListBookByIds(ctx context.Context, arg ListBookByIdsParams) ([]*Book, error) {
+	rows, err := q.query(ctx, q.listBookByIdsStmt, listBookByIds, arg.Limit, arg.Offset, pq.Array(arg.Ids))
 	if err != nil {
 		return nil, err
 	}

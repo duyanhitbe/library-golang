@@ -19,7 +19,7 @@ type SuccessResponse struct {
 	Success    bool               `json:"success"`
 	Message    string             `json:"message"`
 	Data       interface{}        `json:"data"`
-	Pagination PaginationResponse `json:"pagination"`
+	Pagination *PaginationResponse `json:"pagination"`
 }
 
 func (server *HttpServer) Response(response *SuccessResponse) {
@@ -45,7 +45,7 @@ func (server *HttpServer) OkResponse(data interface{}) {
 }
 
 func (server *HttpServer) PaginatedResponse(req *ListRequest, data interface{}, total int64) {
-	pagination := PaginationResponse{
+	pagination := &PaginationResponse{
 		Limit: req.Limit,
 		Page:  req.Page,
 		Total: total,

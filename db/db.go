@@ -27,8 +27,17 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.countBookStmt, err = db.PrepareContext(ctx, countBook); err != nil {
 		return nil, fmt.Errorf("error preparing query CountBook: %w", err)
 	}
+	if q.countBookByIdsStmt, err = db.PrepareContext(ctx, countBookByIds); err != nil {
+		return nil, fmt.Errorf("error preparing query CountBookByIds: %w", err)
+	}
 	if q.countBookInfoStmt, err = db.PrepareContext(ctx, countBookInfo); err != nil {
 		return nil, fmt.Errorf("error preparing query CountBookInfo: %w", err)
+	}
+	if q.countBorrowerStmt, err = db.PrepareContext(ctx, countBorrower); err != nil {
+		return nil, fmt.Errorf("error preparing query CountBorrower: %w", err)
+	}
+	if q.countBorrowerByIdsStmt, err = db.PrepareContext(ctx, countBorrowerByIds); err != nil {
+		return nil, fmt.Errorf("error preparing query CountBorrowerByIds: %w", err)
 	}
 	if q.countCategoryStmt, err = db.PrepareContext(ctx, countCategory); err != nil {
 		return nil, fmt.Errorf("error preparing query CountCategory: %w", err)
@@ -36,8 +45,14 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.createBookStmt, err = db.PrepareContext(ctx, createBook); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateBook: %w", err)
 	}
+	if q.createBookBorrowerStmt, err = db.PrepareContext(ctx, createBookBorrower); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateBookBorrower: %w", err)
+	}
 	if q.createBookInfoStmt, err = db.PrepareContext(ctx, createBookInfo); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateBookInfo: %w", err)
+	}
+	if q.createBorrowerStmt, err = db.PrepareContext(ctx, createBorrower); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateBorrower: %w", err)
 	}
 	if q.createCategoryStmt, err = db.PrepareContext(ctx, createCategory); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateCategory: %w", err)
@@ -48,8 +63,20 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.deleteOneBookInfoByIdStmt, err = db.PrepareContext(ctx, deleteOneBookInfoById); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteOneBookInfoById: %w", err)
 	}
+	if q.deleteOneBorrowerByIdStmt, err = db.PrepareContext(ctx, deleteOneBorrowerById); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteOneBorrowerById: %w", err)
+	}
 	if q.deleteOneCategoryByIdStmt, err = db.PrepareContext(ctx, deleteOneCategoryById); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteOneCategoryById: %w", err)
+	}
+	if q.getAllBookBorrowerByBookIdStmt, err = db.PrepareContext(ctx, getAllBookBorrowerByBookId); err != nil {
+		return nil, fmt.Errorf("error preparing query GetAllBookBorrowerByBookId: %w", err)
+	}
+	if q.getAllBookBorrowerByBorrowerIdStmt, err = db.PrepareContext(ctx, getAllBookBorrowerByBorrowerId); err != nil {
+		return nil, fmt.Errorf("error preparing query GetAllBookBorrowerByBorrowerId: %w", err)
+	}
+	if q.getOneBookBorrowerStmt, err = db.PrepareContext(ctx, getOneBookBorrower); err != nil {
+		return nil, fmt.Errorf("error preparing query GetOneBookBorrower: %w", err)
 	}
 	if q.getOneBookByIdStmt, err = db.PrepareContext(ctx, getOneBookById); err != nil {
 		return nil, fmt.Errorf("error preparing query GetOneBookById: %w", err)
@@ -57,14 +84,29 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getOneBookInfoByIdStmt, err = db.PrepareContext(ctx, getOneBookInfoById); err != nil {
 		return nil, fmt.Errorf("error preparing query GetOneBookInfoById: %w", err)
 	}
+	if q.getOneBorrowerByIdStmt, err = db.PrepareContext(ctx, getOneBorrowerById); err != nil {
+		return nil, fmt.Errorf("error preparing query GetOneBorrowerById: %w", err)
+	}
+	if q.getOneBorrowerByPhoneStmt, err = db.PrepareContext(ctx, getOneBorrowerByPhone); err != nil {
+		return nil, fmt.Errorf("error preparing query GetOneBorrowerByPhone: %w", err)
+	}
 	if q.getOneCategoryByIdStmt, err = db.PrepareContext(ctx, getOneCategoryById); err != nil {
 		return nil, fmt.Errorf("error preparing query GetOneCategoryById: %w", err)
 	}
 	if q.listBookStmt, err = db.PrepareContext(ctx, listBook); err != nil {
 		return nil, fmt.Errorf("error preparing query ListBook: %w", err)
 	}
+	if q.listBookByIdsStmt, err = db.PrepareContext(ctx, listBookByIds); err != nil {
+		return nil, fmt.Errorf("error preparing query ListBookByIds: %w", err)
+	}
 	if q.listBookInfoStmt, err = db.PrepareContext(ctx, listBookInfo); err != nil {
 		return nil, fmt.Errorf("error preparing query ListBookInfo: %w", err)
+	}
+	if q.listBorrowerStmt, err = db.PrepareContext(ctx, listBorrower); err != nil {
+		return nil, fmt.Errorf("error preparing query ListBorrower: %w", err)
+	}
+	if q.listBorrowerByIdsStmt, err = db.PrepareContext(ctx, listBorrowerByIds); err != nil {
+		return nil, fmt.Errorf("error preparing query ListBorrowerByIds: %w", err)
 	}
 	if q.listCategoryStmt, err = db.PrepareContext(ctx, listCategory); err != nil {
 		return nil, fmt.Errorf("error preparing query ListCategory: %w", err)
@@ -74,6 +116,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	}
 	if q.updateOneBookInfoByIdStmt, err = db.PrepareContext(ctx, updateOneBookInfoById); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateOneBookInfoById: %w", err)
+	}
+	if q.updateOneBorrowerByIdStmt, err = db.PrepareContext(ctx, updateOneBorrowerById); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateOneBorrowerById: %w", err)
 	}
 	if q.updateOneCategoryByIdStmt, err = db.PrepareContext(ctx, updateOneCategoryById); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateOneCategoryById: %w", err)
@@ -88,9 +133,24 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing countBookStmt: %w", cerr)
 		}
 	}
+	if q.countBookByIdsStmt != nil {
+		if cerr := q.countBookByIdsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing countBookByIdsStmt: %w", cerr)
+		}
+	}
 	if q.countBookInfoStmt != nil {
 		if cerr := q.countBookInfoStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing countBookInfoStmt: %w", cerr)
+		}
+	}
+	if q.countBorrowerStmt != nil {
+		if cerr := q.countBorrowerStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing countBorrowerStmt: %w", cerr)
+		}
+	}
+	if q.countBorrowerByIdsStmt != nil {
+		if cerr := q.countBorrowerByIdsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing countBorrowerByIdsStmt: %w", cerr)
 		}
 	}
 	if q.countCategoryStmt != nil {
@@ -103,9 +163,19 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing createBookStmt: %w", cerr)
 		}
 	}
+	if q.createBookBorrowerStmt != nil {
+		if cerr := q.createBookBorrowerStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createBookBorrowerStmt: %w", cerr)
+		}
+	}
 	if q.createBookInfoStmt != nil {
 		if cerr := q.createBookInfoStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createBookInfoStmt: %w", cerr)
+		}
+	}
+	if q.createBorrowerStmt != nil {
+		if cerr := q.createBorrowerStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createBorrowerStmt: %w", cerr)
 		}
 	}
 	if q.createCategoryStmt != nil {
@@ -123,9 +193,29 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing deleteOneBookInfoByIdStmt: %w", cerr)
 		}
 	}
+	if q.deleteOneBorrowerByIdStmt != nil {
+		if cerr := q.deleteOneBorrowerByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteOneBorrowerByIdStmt: %w", cerr)
+		}
+	}
 	if q.deleteOneCategoryByIdStmt != nil {
 		if cerr := q.deleteOneCategoryByIdStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing deleteOneCategoryByIdStmt: %w", cerr)
+		}
+	}
+	if q.getAllBookBorrowerByBookIdStmt != nil {
+		if cerr := q.getAllBookBorrowerByBookIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getAllBookBorrowerByBookIdStmt: %w", cerr)
+		}
+	}
+	if q.getAllBookBorrowerByBorrowerIdStmt != nil {
+		if cerr := q.getAllBookBorrowerByBorrowerIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getAllBookBorrowerByBorrowerIdStmt: %w", cerr)
+		}
+	}
+	if q.getOneBookBorrowerStmt != nil {
+		if cerr := q.getOneBookBorrowerStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getOneBookBorrowerStmt: %w", cerr)
 		}
 	}
 	if q.getOneBookByIdStmt != nil {
@@ -138,6 +228,16 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing getOneBookInfoByIdStmt: %w", cerr)
 		}
 	}
+	if q.getOneBorrowerByIdStmt != nil {
+		if cerr := q.getOneBorrowerByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getOneBorrowerByIdStmt: %w", cerr)
+		}
+	}
+	if q.getOneBorrowerByPhoneStmt != nil {
+		if cerr := q.getOneBorrowerByPhoneStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getOneBorrowerByPhoneStmt: %w", cerr)
+		}
+	}
 	if q.getOneCategoryByIdStmt != nil {
 		if cerr := q.getOneCategoryByIdStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getOneCategoryByIdStmt: %w", cerr)
@@ -148,9 +248,24 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing listBookStmt: %w", cerr)
 		}
 	}
+	if q.listBookByIdsStmt != nil {
+		if cerr := q.listBookByIdsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing listBookByIdsStmt: %w", cerr)
+		}
+	}
 	if q.listBookInfoStmt != nil {
 		if cerr := q.listBookInfoStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing listBookInfoStmt: %w", cerr)
+		}
+	}
+	if q.listBorrowerStmt != nil {
+		if cerr := q.listBorrowerStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing listBorrowerStmt: %w", cerr)
+		}
+	}
+	if q.listBorrowerByIdsStmt != nil {
+		if cerr := q.listBorrowerByIdsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing listBorrowerByIdsStmt: %w", cerr)
 		}
 	}
 	if q.listCategoryStmt != nil {
@@ -166,6 +281,11 @@ func (q *Queries) Close() error {
 	if q.updateOneBookInfoByIdStmt != nil {
 		if cerr := q.updateOneBookInfoByIdStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing updateOneBookInfoByIdStmt: %w", cerr)
+		}
+	}
+	if q.updateOneBorrowerByIdStmt != nil {
+		if cerr := q.updateOneBorrowerByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateOneBorrowerByIdStmt: %w", cerr)
 		}
 	}
 	if q.updateOneCategoryByIdStmt != nil {
@@ -210,49 +330,79 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                        DBTX
-	tx                        *sql.Tx
-	countBookStmt             *sql.Stmt
-	countBookInfoStmt         *sql.Stmt
-	countCategoryStmt         *sql.Stmt
-	createBookStmt            *sql.Stmt
-	createBookInfoStmt        *sql.Stmt
-	createCategoryStmt        *sql.Stmt
-	deleteOneBookByIdStmt     *sql.Stmt
-	deleteOneBookInfoByIdStmt *sql.Stmt
-	deleteOneCategoryByIdStmt *sql.Stmt
-	getOneBookByIdStmt        *sql.Stmt
-	getOneBookInfoByIdStmt    *sql.Stmt
-	getOneCategoryByIdStmt    *sql.Stmt
-	listBookStmt              *sql.Stmt
-	listBookInfoStmt          *sql.Stmt
-	listCategoryStmt          *sql.Stmt
-	updateOneBookByIdStmt     *sql.Stmt
-	updateOneBookInfoByIdStmt *sql.Stmt
-	updateOneCategoryByIdStmt *sql.Stmt
+	db                                 DBTX
+	tx                                 *sql.Tx
+	countBookStmt                      *sql.Stmt
+	countBookByIdsStmt                 *sql.Stmt
+	countBookInfoStmt                  *sql.Stmt
+	countBorrowerStmt                  *sql.Stmt
+	countBorrowerByIdsStmt             *sql.Stmt
+	countCategoryStmt                  *sql.Stmt
+	createBookStmt                     *sql.Stmt
+	createBookBorrowerStmt             *sql.Stmt
+	createBookInfoStmt                 *sql.Stmt
+	createBorrowerStmt                 *sql.Stmt
+	createCategoryStmt                 *sql.Stmt
+	deleteOneBookByIdStmt              *sql.Stmt
+	deleteOneBookInfoByIdStmt          *sql.Stmt
+	deleteOneBorrowerByIdStmt          *sql.Stmt
+	deleteOneCategoryByIdStmt          *sql.Stmt
+	getAllBookBorrowerByBookIdStmt     *sql.Stmt
+	getAllBookBorrowerByBorrowerIdStmt *sql.Stmt
+	getOneBookBorrowerStmt             *sql.Stmt
+	getOneBookByIdStmt                 *sql.Stmt
+	getOneBookInfoByIdStmt             *sql.Stmt
+	getOneBorrowerByIdStmt             *sql.Stmt
+	getOneBorrowerByPhoneStmt          *sql.Stmt
+	getOneCategoryByIdStmt             *sql.Stmt
+	listBookStmt                       *sql.Stmt
+	listBookByIdsStmt                  *sql.Stmt
+	listBookInfoStmt                   *sql.Stmt
+	listBorrowerStmt                   *sql.Stmt
+	listBorrowerByIdsStmt              *sql.Stmt
+	listCategoryStmt                   *sql.Stmt
+	updateOneBookByIdStmt              *sql.Stmt
+	updateOneBookInfoByIdStmt          *sql.Stmt
+	updateOneBorrowerByIdStmt          *sql.Stmt
+	updateOneCategoryByIdStmt          *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                        tx,
-		tx:                        tx,
-		countBookStmt:             q.countBookStmt,
-		countBookInfoStmt:         q.countBookInfoStmt,
-		countCategoryStmt:         q.countCategoryStmt,
-		createBookStmt:            q.createBookStmt,
-		createBookInfoStmt:        q.createBookInfoStmt,
-		createCategoryStmt:        q.createCategoryStmt,
-		deleteOneBookByIdStmt:     q.deleteOneBookByIdStmt,
-		deleteOneBookInfoByIdStmt: q.deleteOneBookInfoByIdStmt,
-		deleteOneCategoryByIdStmt: q.deleteOneCategoryByIdStmt,
-		getOneBookByIdStmt:        q.getOneBookByIdStmt,
-		getOneBookInfoByIdStmt:    q.getOneBookInfoByIdStmt,
-		getOneCategoryByIdStmt:    q.getOneCategoryByIdStmt,
-		listBookStmt:              q.listBookStmt,
-		listBookInfoStmt:          q.listBookInfoStmt,
-		listCategoryStmt:          q.listCategoryStmt,
-		updateOneBookByIdStmt:     q.updateOneBookByIdStmt,
-		updateOneBookInfoByIdStmt: q.updateOneBookInfoByIdStmt,
-		updateOneCategoryByIdStmt: q.updateOneCategoryByIdStmt,
+		db:                                 tx,
+		tx:                                 tx,
+		countBookStmt:                      q.countBookStmt,
+		countBookByIdsStmt:                 q.countBookByIdsStmt,
+		countBookInfoStmt:                  q.countBookInfoStmt,
+		countBorrowerStmt:                  q.countBorrowerStmt,
+		countBorrowerByIdsStmt:             q.countBorrowerByIdsStmt,
+		countCategoryStmt:                  q.countCategoryStmt,
+		createBookStmt:                     q.createBookStmt,
+		createBookBorrowerStmt:             q.createBookBorrowerStmt,
+		createBookInfoStmt:                 q.createBookInfoStmt,
+		createBorrowerStmt:                 q.createBorrowerStmt,
+		createCategoryStmt:                 q.createCategoryStmt,
+		deleteOneBookByIdStmt:              q.deleteOneBookByIdStmt,
+		deleteOneBookInfoByIdStmt:          q.deleteOneBookInfoByIdStmt,
+		deleteOneBorrowerByIdStmt:          q.deleteOneBorrowerByIdStmt,
+		deleteOneCategoryByIdStmt:          q.deleteOneCategoryByIdStmt,
+		getAllBookBorrowerByBookIdStmt:     q.getAllBookBorrowerByBookIdStmt,
+		getAllBookBorrowerByBorrowerIdStmt: q.getAllBookBorrowerByBorrowerIdStmt,
+		getOneBookBorrowerStmt:             q.getOneBookBorrowerStmt,
+		getOneBookByIdStmt:                 q.getOneBookByIdStmt,
+		getOneBookInfoByIdStmt:             q.getOneBookInfoByIdStmt,
+		getOneBorrowerByIdStmt:             q.getOneBorrowerByIdStmt,
+		getOneBorrowerByPhoneStmt:          q.getOneBorrowerByPhoneStmt,
+		getOneCategoryByIdStmt:             q.getOneCategoryByIdStmt,
+		listBookStmt:                       q.listBookStmt,
+		listBookByIdsStmt:                  q.listBookByIdsStmt,
+		listBookInfoStmt:                   q.listBookInfoStmt,
+		listBorrowerStmt:                   q.listBorrowerStmt,
+		listBorrowerByIdsStmt:              q.listBorrowerByIdsStmt,
+		listCategoryStmt:                   q.listCategoryStmt,
+		updateOneBookByIdStmt:              q.updateOneBookByIdStmt,
+		updateOneBookInfoByIdStmt:          q.updateOneBookInfoByIdStmt,
+		updateOneBorrowerByIdStmt:          q.updateOneBorrowerByIdStmt,
+		updateOneCategoryByIdStmt:          q.updateOneCategoryByIdStmt,
 	}
 }

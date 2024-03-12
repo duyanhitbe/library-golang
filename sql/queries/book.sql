@@ -10,9 +10,19 @@ WHERE "deleted_at" IS NULL
 LIMIT $1
 OFFSET $2;
 
+-- name: ListBookByIds :many
+SELECT * FROM "books"
+WHERE "id" = ANY(sqlc.arg(ids)::uuid[]) AND "deleted_at" IS NULL
+LIMIT $1
+OFFSET $2;
+
 -- name: CountBook :one
 SELECT COUNT(*) FROM "books"
 WHERE "deleted_at" IS NULL;
+
+-- name: CountBookByIds :one
+SELECT COUNT(*) FROM "books"
+WHERE "id" = ANY(sqlc.arg(ids)::uuid[]) AND "deleted_at" IS NULL;
 
 -- name: GetOneBookById :one
 SELECT * FROM "books"
