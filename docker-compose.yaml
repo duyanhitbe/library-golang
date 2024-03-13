@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      - DRIVER_NAME=postgres
+      - DATA_SOURCE=postgresql://postgres:123456@postgres:5432/library?sslmode=disable
+      - HTTP_SERVER_ADDRESS=0.0.0.0:8080
+      - SECRET_JWT=verystrongsecret
+    depends_on:
+      - postgres
+    restart: always
+  postgres:
+    image: postgres:16.2-alpine3.19
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=library
+    ports:
+      - 5433:5432

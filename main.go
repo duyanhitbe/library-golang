@@ -2,11 +2,15 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"os"
 
 	"github.com/duyanhitbe/library-golang/apis"
 	"github.com/duyanhitbe/library-golang/config"
 	"github.com/duyanhitbe/library-golang/token"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -19,15 +23,50 @@ func main() {
 	env := config.NewEnv()
 
 	//Database
+	db, err := connectDB(env)
+	if err != nil {
+		log.Fatal().Err(err).Msg("fail to connect database")
+	}
+
+	//Migrate
+	err = runMigration(env.DataSource)
+	if err != nil {
+		log.Fatal().Err(err).Msg("fail to run migration")
+	}
+
+	//Start HTTP server
+	err = startHttpServer(db, env)
+	if err != nil {
+		log.Fatal().Err(err).Msg("fail to start HTTP server")
+	}
+}
+
+func connectDB(env *config.Env) (*sql.DB, error) {
 	db, err := sql.Open(env.DriverName, env.DataSource)
 	if err != nil {
-		log.Fatal().Err(err)
+		return nil, err
 	}
 	errPing := db.Ping()
 	if errPing != nil {
-		log.Fatal().Err(errPing)
+		return nil, err
 	}
+	return db, nil
+}
 
+func runMigration(dataSource string) error {
+	m, err := migrate.New("file://sql/migrations", dataSource)
+	if err != nil {
+		return err
+	}
+	err = m.Up()
+	if err != nil && err != migrate.ErrNoChange {
+		return err
+	}
+	fmt.Println("Run migration successfully")
+	return nil
+}
+
+func startHttpServer(db *sql.DB, env *config.Env) error {
 	//Token maker
 	tokenMaker := token.NewJWTMaker(env.SecretJWT)
 
@@ -35,8 +74,5 @@ func main() {
 	server := apis.NewHttpServer(env, db, tokenMaker)
 
 	//Start the server
-	err = server.Start()
-	if err != nil {
-		log.Fatal().Err(err)
-	}
+	return server.Start()
 }
