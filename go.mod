@@ -4,6 +4,7 @@ go 1.21.0
 
 require (
 	github.com/alexedwards/argon2id v1.0.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/google/uuid v1.6.0

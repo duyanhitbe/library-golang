@@ -95,6 +95,27 @@ func (q *Queries) GetOneUserById(ctx context.Context, id uuid.UUID) (*User, erro
 	return &i, err
 }
 
+const getOneUserByUsername = `-- name: GetOneUserByUsername :one
+SELECT id, username, password, role, created_at, updated_at, deleted_at, is_active FROM "users"
+WHERE "username" = $1 AND "deleted_at" IS NULL
+`
+
+func (q *Queries) GetOneUserByUsername(ctx context.Context, username string) (*User, error) {
+	row := q.queryRow(ctx, q.getOneUserByUsernameStmt, getOneUserByUsername, username)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Password,
+		&i.Role,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.IsActive,
+	)
+	return &i, err
+}
+
 const listUser = `-- name: ListUser :many
 SELECT id, username, password, role, created_at, updated_at, deleted_at, is_active FROM "users"
 WHERE "deleted_at" IS NULL

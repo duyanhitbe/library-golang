@@ -107,3 +107,9 @@ func (server *HttpServer) parseUserResponse(user *db.User) *UserResponse {
 		IsActive:  user.IsActive,
 	}
 }
+
+type LoginUserResponse struct {
+	AccessToken          string    `json:"access_token,omitempty"`
+	AccessTokenExpiresAt time.Time `json:"access_token_exp,omitempty"`
+	AccessTokenIssuedAt  time.Time `json:"access_token_iat,omitempty"`
+}

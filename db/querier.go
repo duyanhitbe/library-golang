@@ -38,6 +38,7 @@ type Querier interface {
 	GetOneBorrowerByPhone(ctx context.Context, phone string) (*Borrower, error)
 	GetOneCategoryById(ctx context.Context, id uuid.UUID) (*Category, error)
 	GetOneUserById(ctx context.Context, id uuid.UUID) (*User, error)
+	GetOneUserByUsername(ctx context.Context, username string) (*User, error)
 	ListBook(ctx context.Context, arg ListBookParams) ([]*Book, error)
 	ListBookByIds(ctx context.Context, arg ListBookByIdsParams) ([]*Book, error)
 	ListBookInfo(ctx context.Context, arg ListBookInfoParams) ([]*BookInfo, error)

@@ -18,6 +18,10 @@ WHERE "deleted_at" IS NULL;
 SELECT * FROM "users"
 WHERE "id" = $1 AND "deleted_at" IS NULL;
 
+-- name: GetOneUserByUsername :one
+SELECT * FROM "users"
+WHERE "username" = $1 AND "deleted_at" IS NULL;
+
 -- name: UpdateOneUserById :one
 UPDATE "users"
 SET "username" = $2, "role" = $3

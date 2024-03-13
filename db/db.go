@@ -105,6 +105,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getOneUserByIdStmt, err = db.PrepareContext(ctx, getOneUserById); err != nil {
 		return nil, fmt.Errorf("error preparing query GetOneUserById: %w", err)
 	}
+	if q.getOneUserByUsernameStmt, err = db.PrepareContext(ctx, getOneUserByUsername); err != nil {
+		return nil, fmt.Errorf("error preparing query GetOneUserByUsername: %w", err)
+	}
 	if q.listBookStmt, err = db.PrepareContext(ctx, listBook); err != nil {
 		return nil, fmt.Errorf("error preparing query ListBook: %w", err)
 	}
@@ -281,6 +284,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing getOneUserByIdStmt: %w", cerr)
 		}
 	}
+	if q.getOneUserByUsernameStmt != nil {
+		if cerr := q.getOneUserByUsernameStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getOneUserByUsernameStmt: %w", cerr)
+		}
+	}
 	if q.listBookStmt != nil {
 		if cerr := q.listBookStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing listBookStmt: %w", cerr)
@@ -407,6 +415,7 @@ type Queries struct {
 	getOneBorrowerByPhoneStmt          *sql.Stmt
 	getOneCategoryByIdStmt             *sql.Stmt
 	getOneUserByIdStmt                 *sql.Stmt
+	getOneUserByUsernameStmt           *sql.Stmt
 	listBookStmt                       *sql.Stmt
 	listBookByIdsStmt                  *sql.Stmt
 	listBookInfoStmt                   *sql.Stmt
@@ -452,6 +461,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		getOneBorrowerByPhoneStmt:          q.getOneBorrowerByPhoneStmt,
 		getOneCategoryByIdStmt:             q.getOneCategoryByIdStmt,
 		getOneUserByIdStmt:                 q.getOneUserByIdStmt,
+		getOneUserByUsernameStmt:           q.getOneUserByUsernameStmt,
 		listBookStmt:                       q.listBookStmt,
 		listBookByIdsStmt:                  q.listBookByIdsStmt,
 		listBookInfoStmt:                   q.listBookInfoStmt,

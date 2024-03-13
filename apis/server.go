@@ -6,26 +6,29 @@ import (
 	"github.com/duyanhitbe/library-golang/config"
 	"github.com/duyanhitbe/library-golang/db"
 	"github.com/duyanhitbe/library-golang/hash"
+	"github.com/duyanhitbe/library-golang/token"
 	"github.com/gin-gonic/gin"
 )
 
 type HttpServer struct {
-	engine *gin.Engine
-	store  db.Store
-	env    *config.Env
-	ctx    *gin.Context
-	hash   hash.Hash
+	engine     *gin.Engine
+	store      db.Store
+	env        *config.Env
+	ctx        *gin.Context
+	hash       hash.Hash
+	tokenMaker token.TokenMaker
 }
 
-func NewHttpServer(env *config.Env, database *sql.DB) *HttpServer {
+func NewHttpServer(env *config.Env, database *sql.DB, tokenMaker token.TokenMaker) *HttpServer {
 	engine := gin.Default()
 	store := db.NewStore(database)
 	hash := hash.NewArgon2()
 	return &HttpServer{
-		engine: engine,
-		store:  store,
-		env:    env,
-		hash:   hash,
+		engine:     engine,
+		store:      store,
+		env:        env,
+		hash:       hash,
+		tokenMaker: tokenMaker,
 	}
 }
 

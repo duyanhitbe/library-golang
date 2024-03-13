@@ -12,9 +12,9 @@ import (
 
 type CreateBookRequest struct {
 	Name            string    `json:"name" binding:"required"`
-	CategoryID      uuid.UUID `json:"category_id"`
-	Author          string    `json:"author"`
-	PublicationDate time.Time `json:"publication_date"`
+	CategoryID      uuid.UUID `json:"category_id" binding:"required"`
+	Author          string    `json:"author" binding:"required"`
+	PublicationDate time.Time `json:"publication_date" binding:"required"`
 }
 
 func (server *HttpServer) CreateBook(ctx *gin.Context) {
@@ -127,9 +127,9 @@ func (server *HttpServer) GetOneBookById(ctx *gin.Context) {
 
 type UpdateOneBookByIdRequest struct {
 	Name            string    `json:"name" binding:"required"`
-	CategoryID      uuid.UUID `json:"category_id"`
-	Author          string    `json:"author"`
-	PublicationDate time.Time `json:"publication_date"`
+	CategoryID      uuid.UUID `json:"category_id" binding:"required"`
+	Author          string    `json:"author" binding:"required"`
+	PublicationDate time.Time `json:"publication_date" binding:"required"`
 }
 
 func (server *HttpServer) UpdateOneBookById(ctx *gin.Context) {

@@ -6,9 +6,9 @@ import (
 )
 
 type CreateUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Role     string `json:"role"`
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Role     string `json:"role" binding:"required"`
 }
 
 func (server *HttpServer) CreateUser(ctx *gin.Context) {
@@ -90,8 +90,8 @@ func (server *HttpServer) GetOneUserById(ctx *gin.Context) {
 }
 
 type UpdateOneUserByIdRequest struct {
-	Username string `json:"username"`
-	Role     string `json:"role"`
+	Username string `json:"username" binding:"required"`
+	Role     string `json:"role" binding:"required"`
 }
 
 func (server *HttpServer) UpdateOneUserById(ctx *gin.Context) {
