@@ -16,4 +16,8 @@ jobs:
           account_id: ${{ secrets.AWS_ACCOUNT_ID }}
           repo: golang-library
           region: us-east-1
-          tags: latest,${{ github.sha }}
+          tags: ${{ github.sha }}
+          create_repo: true
+          image_scanning_configuration: true
+          set_repo_policy: true
+          repo_policy_file: repo-policy.json
