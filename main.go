@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"os"
 
 	"github.com/duyanhitbe/library-golang/apis"
@@ -62,7 +61,7 @@ func runMigration(dataSource string) error {
 	if err != nil && err != migrate.ErrNoChange {
 		return err
 	}
-	fmt.Println("Run migration successfully")
+	log.Info().Msg("Run migration successfully")
 	return nil
 }
 

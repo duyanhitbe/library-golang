@@ -2,24 +2,33 @@ version: "3.8"
 
 services:
   app:
+    container_name: library-golang
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - "8080:8080"
     environment:
       - DRIVER_NAME=postgres
       - DATA_SOURCE=postgresql://postgres:123456@postgres:5432/library?sslmode=disable
       - HTTP_SERVER_ADDRESS=0.0.0.0:8080
-      - SECRET_JWT=verystrongsecret
+      - SECRET_JWT=very_strong_secret
     depends_on:
       - postgres
+    networks:
+      - golang_library_app_db
     restart: always
   postgres:
+    container_name: library-postgres
     image: postgres:16.2-alpine3.19
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=library
     ports:
-      - 5433:5432
+      - "5433:5432"
+    networks:
+      - golang_library_app_db
+
+networks:
+  golang_library_app_db:
