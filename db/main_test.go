@@ -19,13 +19,41 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatal().Msg("Can not connect DB")
 	}
-
 	testDB = db
 	testQueries = New(testDB)
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
 
+		}
+	}(db)
 	os.Exit(m.Run())
+}
+
+func removeAll() {
+	removeAllUser()
+	removeAllBook()
+	removeAllBookInfo()
+	removeAllCategory()
+	removeAllBorrower()
 }
 
 func removeAllCategory() {
 	testDB.QueryRowContext(context.Background(), `DELETE FROM "categories"`)
+}
+
+func removeAllUser() {
+	testDB.QueryRowContext(context.Background(), `DELETE FROM "users"`)
+}
+
+func removeAllBook() {
+	testDB.QueryRowContext(context.Background(), `DELETE FROM "books"`)
+}
+
+func removeAllBookInfo() {
+	testDB.QueryRowContext(context.Background(), `DELETE FROM "book_infos"`)
+}
+
+func removeAllBorrower() {
+	testDB.QueryRowContext(context.Background(), `DELETE FROM "borrowers"`)
 }

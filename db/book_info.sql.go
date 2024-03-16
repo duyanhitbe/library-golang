@@ -18,7 +18,7 @@ WHERE "deleted_at" IS NULL
 `
 
 func (q *Queries) CountBookInfo(ctx context.Context) (int64, error) {
-	row := q.queryRow(ctx, q.countBookInfoStmt, countBookInfo)
+	row := q.db.QueryRowContext(ctx, countBookInfo)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -37,7 +37,7 @@ type CreateBookInfoParams struct {
 }
 
 func (q *Queries) CreateBookInfo(ctx context.Context, arg CreateBookInfoParams) (*BookInfo, error) {
-	row := q.queryRow(ctx, q.createBookInfoStmt, createBookInfo, arg.Name, arg.Author, arg.PublicationDate)
+	row := q.db.QueryRowContext(ctx, createBookInfo, arg.Name, arg.Author, arg.PublicationDate)
 	var i BookInfo
 	err := row.Scan(
 		&i.ID,
@@ -60,7 +60,7 @@ RETURNING id, name, author, publication_date, created_at, updated_at, deleted_at
 `
 
 func (q *Queries) DeleteOneBookInfoById(ctx context.Context, id uuid.UUID) (*BookInfo, error) {
-	row := q.queryRow(ctx, q.deleteOneBookInfoByIdStmt, deleteOneBookInfoById, id)
+	row := q.db.QueryRowContext(ctx, deleteOneBookInfoById, id)
 	var i BookInfo
 	err := row.Scan(
 		&i.ID,
@@ -81,7 +81,7 @@ WHERE "id" = $1 AND "deleted_at" IS NULL
 `
 
 func (q *Queries) GetOneBookInfoById(ctx context.Context, id uuid.UUID) (*BookInfo, error) {
-	row := q.queryRow(ctx, q.getOneBookInfoByIdStmt, getOneBookInfoById, id)
+	row := q.db.QueryRowContext(ctx, getOneBookInfoById, id)
 	var i BookInfo
 	err := row.Scan(
 		&i.ID,
@@ -109,7 +109,7 @@ type ListBookInfoParams struct {
 }
 
 func (q *Queries) ListBookInfo(ctx context.Context, arg ListBookInfoParams) ([]*BookInfo, error) {
-	rows, err := q.query(ctx, q.listBookInfoStmt, listBookInfo, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, listBookInfo, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +155,7 @@ type UpdateOneBookInfoByIdParams struct {
 }
 
 func (q *Queries) UpdateOneBookInfoById(ctx context.Context, arg UpdateOneBookInfoByIdParams) (*BookInfo, error) {
-	row := q.queryRow(ctx, q.updateOneBookInfoByIdStmt, updateOneBookInfoById,
+	row := q.db.QueryRowContext(ctx, updateOneBookInfoById,
 		arg.ID,
 		arg.Name,
 		arg.Author,

@@ -18,7 +18,7 @@ WHERE "deleted_at" IS NULL
 `
 
 func (q *Queries) CountBorrower(ctx context.Context) (int64, error) {
-	row := q.queryRow(ctx, q.countBorrowerStmt, countBorrower)
+	row := q.db.QueryRowContext(ctx, countBorrower)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -30,7 +30,7 @@ WHERE "id" = ANY($1::uuid[]) AND "deleted_at" IS NULL
 `
 
 func (q *Queries) CountBorrowerByIds(ctx context.Context, ids []uuid.UUID) (int64, error) {
-	row := q.queryRow(ctx, q.countBorrowerByIdsStmt, countBorrowerByIds, pq.Array(ids))
+	row := q.db.QueryRowContext(ctx, countBorrowerByIds, pq.Array(ids))
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -49,7 +49,7 @@ type CreateBorrowerParams struct {
 }
 
 func (q *Queries) CreateBorrower(ctx context.Context, arg CreateBorrowerParams) (*Borrower, error) {
-	row := q.queryRow(ctx, q.createBorrowerStmt, createBorrower, arg.Name, arg.Phone, arg.Address)
+	row := q.db.QueryRowContext(ctx, createBorrower, arg.Name, arg.Phone, arg.Address)
 	var i Borrower
 	err := row.Scan(
 		&i.ID,
@@ -72,7 +72,7 @@ RETURNING id, name, phone, address, created_at, updated_at, deleted_at, is_activ
 `
 
 func (q *Queries) DeleteOneBorrowerById(ctx context.Context, id uuid.UUID) (*Borrower, error) {
-	row := q.queryRow(ctx, q.deleteOneBorrowerByIdStmt, deleteOneBorrowerById, id)
+	row := q.db.QueryRowContext(ctx, deleteOneBorrowerById, id)
 	var i Borrower
 	err := row.Scan(
 		&i.ID,
@@ -93,7 +93,7 @@ WHERE "id" = $1 AND "deleted_at" IS NULL
 `
 
 func (q *Queries) GetOneBorrowerById(ctx context.Context, id uuid.UUID) (*Borrower, error) {
-	row := q.queryRow(ctx, q.getOneBorrowerByIdStmt, getOneBorrowerById, id)
+	row := q.db.QueryRowContext(ctx, getOneBorrowerById, id)
 	var i Borrower
 	err := row.Scan(
 		&i.ID,
@@ -114,7 +114,7 @@ WHERE "phone" = $1 AND "deleted_at" IS NULL
 `
 
 func (q *Queries) GetOneBorrowerByPhone(ctx context.Context, phone string) (*Borrower, error) {
-	row := q.queryRow(ctx, q.getOneBorrowerByPhoneStmt, getOneBorrowerByPhone, phone)
+	row := q.db.QueryRowContext(ctx, getOneBorrowerByPhone, phone)
 	var i Borrower
 	err := row.Scan(
 		&i.ID,
@@ -142,7 +142,7 @@ type ListBorrowerParams struct {
 }
 
 func (q *Queries) ListBorrower(ctx context.Context, arg ListBorrowerParams) ([]*Borrower, error) {
-	rows, err := q.query(ctx, q.listBorrowerStmt, listBorrower, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, listBorrower, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +187,7 @@ type ListBorrowerByIdsParams struct {
 }
 
 func (q *Queries) ListBorrowerByIds(ctx context.Context, arg ListBorrowerByIdsParams) ([]*Borrower, error) {
-	rows, err := q.query(ctx, q.listBorrowerByIdsStmt, listBorrowerByIds, arg.Limit, arg.Offset, pq.Array(arg.Ids))
+	rows, err := q.db.QueryContext(ctx, listBorrowerByIds, arg.Limit, arg.Offset, pq.Array(arg.Ids))
 	if err != nil {
 		return nil, err
 	}
@@ -233,7 +233,7 @@ type UpdateOneBorrowerByIdParams struct {
 }
 
 func (q *Queries) UpdateOneBorrowerById(ctx context.Context, arg UpdateOneBorrowerByIdParams) (*Borrower, error) {
-	row := q.queryRow(ctx, q.updateOneBorrowerByIdStmt, updateOneBorrowerById,
+	row := q.db.QueryRowContext(ctx, updateOneBorrowerById,
 		arg.ID,
 		arg.Name,
 		arg.Phone,

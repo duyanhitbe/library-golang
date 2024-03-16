@@ -18,7 +18,7 @@ WHERE "deleted_at" IS NULL
 `
 
 func (q *Queries) CountBook(ctx context.Context) (int64, error) {
-	row := q.queryRow(ctx, q.countBookStmt, countBook)
+	row := q.db.QueryRowContext(ctx, countBook)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -30,7 +30,7 @@ WHERE "id" = ANY($1::uuid[]) AND "deleted_at" IS NULL
 `
 
 func (q *Queries) CountBookByIds(ctx context.Context, ids []uuid.UUID) (int64, error) {
-	row := q.queryRow(ctx, q.countBookByIdsStmt, countBookByIds, pq.Array(ids))
+	row := q.db.QueryRowContext(ctx, countBookByIds, pq.Array(ids))
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -48,7 +48,7 @@ type CreateBookParams struct {
 }
 
 func (q *Queries) CreateBook(ctx context.Context, arg CreateBookParams) (*Book, error) {
-	row := q.queryRow(ctx, q.createBookStmt, createBook, arg.CategoryID, arg.BookInfoID)
+	row := q.db.QueryRowContext(ctx, createBook, arg.CategoryID, arg.BookInfoID)
 	var i Book
 	err := row.Scan(
 		&i.ID,
@@ -70,7 +70,7 @@ RETURNING id, category_id, book_info_id, created_at, updated_at, deleted_at, is_
 `
 
 func (q *Queries) DeleteOneBookById(ctx context.Context, id uuid.UUID) (*Book, error) {
-	row := q.queryRow(ctx, q.deleteOneBookByIdStmt, deleteOneBookById, id)
+	row := q.db.QueryRowContext(ctx, deleteOneBookById, id)
 	var i Book
 	err := row.Scan(
 		&i.ID,
@@ -90,7 +90,7 @@ WHERE "id" = $1 AND "deleted_at" IS NULL
 `
 
 func (q *Queries) GetOneBookById(ctx context.Context, id uuid.UUID) (*Book, error) {
-	row := q.queryRow(ctx, q.getOneBookByIdStmt, getOneBookById, id)
+	row := q.db.QueryRowContext(ctx, getOneBookById, id)
 	var i Book
 	err := row.Scan(
 		&i.ID,
@@ -117,7 +117,7 @@ type ListBookParams struct {
 }
 
 func (q *Queries) ListBook(ctx context.Context, arg ListBookParams) ([]*Book, error) {
-	rows, err := q.query(ctx, q.listBookStmt, listBook, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, listBook, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +161,7 @@ type ListBookByIdsParams struct {
 }
 
 func (q *Queries) ListBookByIds(ctx context.Context, arg ListBookByIdsParams) ([]*Book, error) {
-	rows, err := q.query(ctx, q.listBookByIdsStmt, listBookByIds, arg.Limit, arg.Offset, pq.Array(arg.Ids))
+	rows, err := q.db.QueryContext(ctx, listBookByIds, arg.Limit, arg.Offset, pq.Array(arg.Ids))
 	if err != nil {
 		return nil, err
 	}
@@ -204,7 +204,7 @@ type UpdateOneBookByIdParams struct {
 }
 
 func (q *Queries) UpdateOneBookById(ctx context.Context, arg UpdateOneBookByIdParams) (*Book, error) {
-	row := q.queryRow(ctx, q.updateOneBookByIdStmt, updateOneBookById, arg.ID, arg.CategoryID)
+	row := q.db.QueryRowContext(ctx, updateOneBookById, arg.ID, arg.CategoryID)
 	var i Book
 	err := row.Scan(
 		&i.ID,

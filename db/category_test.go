@@ -19,7 +19,7 @@ func createRandomCategory(t *testing.T) *Category {
 }
 
 func TestQueries_CountCategory(t *testing.T) {
-	removeAllCategory()
+	removeAll()
 	createRandomCategory(t)
 	count, err := testQueries.CountCategory(context.Background())
 	require.NoError(t, err)
@@ -27,12 +27,12 @@ func TestQueries_CountCategory(t *testing.T) {
 }
 
 func TestQueries_CreateCategory(t *testing.T) {
-	removeAllCategory()
+	removeAll()
 	createRandomCategory(t)
 }
 
 func TestQueries_DeleteOneCategoryById(t *testing.T) {
-	removeAllCategory()
+	removeAll()
 	category := createRandomCategory(t)
 
 	deletedCategory, err := testQueries.DeleteOneCategoryById(context.Background(), category.ID)
@@ -46,7 +46,7 @@ func TestQueries_DeleteOneCategoryById(t *testing.T) {
 }
 
 func TestQueries_GetOneCategoryById(t *testing.T) {
-	removeAllCategory()
+	removeAll()
 	category := createRandomCategory(t)
 
 	findOneCategory, err := testQueries.GetOneCategoryById(context.Background(), category.ID)
@@ -60,7 +60,7 @@ func TestQueries_GetOneCategoryById(t *testing.T) {
 }
 
 func TestQueries_ListCategory(t *testing.T) {
-	removeAllCategory()
+	removeAll()
 	createRandomCategory(t)
 	createRandomCategory(t)
 
@@ -80,7 +80,7 @@ func TestQueries_ListCategory(t *testing.T) {
 }
 
 func TestQueries_UpdateOneCategoryById(t *testing.T) {
-	removeAllCategory()
+	removeAll()
 	category := createRandomCategory(t)
 
 	updatedCategory, err := testQueries.UpdateOneCategoryById(context.Background(), UpdateOneCategoryByIdParams{

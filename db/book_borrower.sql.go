@@ -23,7 +23,7 @@ type CreateBookBorrowerParams struct {
 }
 
 func (q *Queries) CreateBookBorrower(ctx context.Context, arg CreateBookBorrowerParams) (*BookBorrower, error) {
-	row := q.queryRow(ctx, q.createBookBorrowerStmt, createBookBorrower, arg.BorrowerID, arg.BookID)
+	row := q.db.QueryRowContext(ctx, createBookBorrower, arg.BorrowerID, arg.BookID)
 	var i BookBorrower
 	err := row.Scan(&i.BorrowerID, &i.BookID)
 	return &i, err
@@ -35,7 +35,7 @@ WHERE "book_id" = $1
 `
 
 func (q *Queries) GetAllBookBorrowerByBookId(ctx context.Context, bookID uuid.UUID) ([]*BookBorrower, error) {
-	rows, err := q.query(ctx, q.getAllBookBorrowerByBookIdStmt, getAllBookBorrowerByBookId, bookID)
+	rows, err := q.db.QueryContext(ctx, getAllBookBorrowerByBookId, bookID)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ WHERE "borrower_id" = $1
 `
 
 func (q *Queries) GetAllBookBorrowerByBorrowerId(ctx context.Context, borrowerID uuid.UUID) ([]*BookBorrower, error) {
-	rows, err := q.query(ctx, q.getAllBookBorrowerByBorrowerIdStmt, getAllBookBorrowerByBorrowerId, borrowerID)
+	rows, err := q.db.QueryContext(ctx, getAllBookBorrowerByBorrowerId, borrowerID)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ type GetOneBookBorrowerParams struct {
 }
 
 func (q *Queries) GetOneBookBorrower(ctx context.Context, arg GetOneBookBorrowerParams) (*BookBorrower, error) {
-	row := q.queryRow(ctx, q.getOneBookBorrowerStmt, getOneBookBorrower, arg.BorrowerID, arg.BookID)
+	row := q.db.QueryRowContext(ctx, getOneBookBorrower, arg.BorrowerID, arg.BookID)
 	var i BookBorrower
 	err := row.Scan(&i.BorrowerID, &i.BookID)
 	return &i, err

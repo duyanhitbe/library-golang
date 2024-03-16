@@ -17,7 +17,7 @@ WHERE "deleted_at" IS NULL
 `
 
 func (q *Queries) CountUser(ctx context.Context) (int64, error) {
-	row := q.queryRow(ctx, q.countUserStmt, countUser)
+	row := q.db.QueryRowContext(ctx, countUser)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -36,7 +36,7 @@ type CreateUserParams struct {
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (*User, error) {
-	row := q.queryRow(ctx, q.createUserStmt, createUser, arg.Username, arg.Password, arg.Role)
+	row := q.db.QueryRowContext(ctx, createUser, arg.Username, arg.Password, arg.Role)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -59,7 +59,7 @@ RETURNING id, username, password, role, created_at, updated_at, deleted_at, is_a
 `
 
 func (q *Queries) DeleteOneUserById(ctx context.Context, id uuid.UUID) (*User, error) {
-	row := q.queryRow(ctx, q.deleteOneUserByIdStmt, deleteOneUserById, id)
+	row := q.db.QueryRowContext(ctx, deleteOneUserById, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -80,7 +80,7 @@ WHERE "id" = $1 AND "deleted_at" IS NULL
 `
 
 func (q *Queries) GetOneUserById(ctx context.Context, id uuid.UUID) (*User, error) {
-	row := q.queryRow(ctx, q.getOneUserByIdStmt, getOneUserById, id)
+	row := q.db.QueryRowContext(ctx, getOneUserById, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -101,7 +101,7 @@ WHERE "username" = $1 AND "deleted_at" IS NULL
 `
 
 func (q *Queries) GetOneUserByUsername(ctx context.Context, username string) (*User, error) {
-	row := q.queryRow(ctx, q.getOneUserByUsernameStmt, getOneUserByUsername, username)
+	row := q.db.QueryRowContext(ctx, getOneUserByUsername, username)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -129,7 +129,7 @@ type ListUserParams struct {
 }
 
 func (q *Queries) ListUser(ctx context.Context, arg ListUserParams) ([]*User, error) {
-	rows, err := q.query(ctx, q.listUserStmt, listUser, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, listUser, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ type UpdateOneUserByIdParams struct {
 }
 
 func (q *Queries) UpdateOneUserById(ctx context.Context, arg UpdateOneUserByIdParams) (*User, error) {
-	row := q.queryRow(ctx, q.updateOneUserByIdStmt, updateOneUserById, arg.ID, arg.Username, arg.Role)
+	row := q.db.QueryRowContext(ctx, updateOneUserById, arg.ID, arg.Username, arg.Role)
 	var i User
 	err := row.Scan(
 		&i.ID,

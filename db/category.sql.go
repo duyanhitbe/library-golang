@@ -17,7 +17,7 @@ WHERE "deleted_at" IS NULL
 `
 
 func (q *Queries) CountCategory(ctx context.Context) (int64, error) {
-	row := q.queryRow(ctx, q.countCategoryStmt, countCategory)
+	row := q.db.QueryRowContext(ctx, countCategory)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -30,7 +30,7 @@ RETURNING id, name, created_at, updated_at, deleted_at, is_active
 `
 
 func (q *Queries) CreateCategory(ctx context.Context, name string) (*Category, error) {
-	row := q.queryRow(ctx, q.createCategoryStmt, createCategory, name)
+	row := q.db.QueryRowContext(ctx, createCategory, name)
 	var i Category
 	err := row.Scan(
 		&i.ID,
@@ -51,7 +51,7 @@ RETURNING id, name, created_at, updated_at, deleted_at, is_active
 `
 
 func (q *Queries) DeleteOneCategoryById(ctx context.Context, id uuid.UUID) (*Category, error) {
-	row := q.queryRow(ctx, q.deleteOneCategoryByIdStmt, deleteOneCategoryById, id)
+	row := q.db.QueryRowContext(ctx, deleteOneCategoryById, id)
 	var i Category
 	err := row.Scan(
 		&i.ID,
@@ -70,7 +70,7 @@ WHERE "id" = $1 AND "deleted_at" IS NULL
 `
 
 func (q *Queries) GetOneCategoryById(ctx context.Context, id uuid.UUID) (*Category, error) {
-	row := q.queryRow(ctx, q.getOneCategoryByIdStmt, getOneCategoryById, id)
+	row := q.db.QueryRowContext(ctx, getOneCategoryById, id)
 	var i Category
 	err := row.Scan(
 		&i.ID,
@@ -96,7 +96,7 @@ type ListCategoryParams struct {
 }
 
 func (q *Queries) ListCategory(ctx context.Context, arg ListCategoryParams) ([]*Category, error) {
-	rows, err := q.query(ctx, q.listCategoryStmt, listCategory, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, listCategory, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,7 @@ type UpdateOneCategoryByIdParams struct {
 }
 
 func (q *Queries) UpdateOneCategoryById(ctx context.Context, arg UpdateOneCategoryByIdParams) (*Category, error) {
-	row := q.queryRow(ctx, q.updateOneCategoryByIdStmt, updateOneCategoryById, arg.ID, arg.Name)
+	row := q.db.QueryRowContext(ctx, updateOneCategoryById, arg.ID, arg.Name)
 	var i Category
 	err := row.Scan(
 		&i.ID,
