@@ -11,6 +11,16 @@ type CreateUserRequest struct {
 	Role     string `json:"role" binding:"required"`
 }
 
+// CreateUser godoc
+// @Summary Create one user
+// @Tags User API
+// @Accept application/json
+// @Produce application/json
+// @Param body body apis.CreateUserRequest true "Create user request"
+// @Success 200 {object} apis.SuccessResponse{data=apis.UserResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/user [post]
 func (server *HttpServer) CreateUser(ctx *gin.Context) {
 	var req CreateUserRequest
 	if ok := server.BindJSON(&req); !ok {
@@ -36,6 +46,16 @@ func (server *HttpServer) CreateUser(ctx *gin.Context) {
 	server.OkResponse(rsp)
 }
 
+// ListUser godoc
+// @Summary Get a list of users
+// @Tags User API
+// @Accept application/json
+// @Produce application/json
+// @Param query query apis.SwaggerListRequest false "List query request"
+// @Success 200 {object} apis.PaginationResponse{data=[]apis.UserResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/user [get]
 func (server *HttpServer) ListUser(ctx *gin.Context) {
 	req := server.BindPagination()
 	if req == nil {
@@ -70,6 +90,16 @@ func (server *HttpServer) ListUser(ctx *gin.Context) {
 	server.PaginatedResponse(req, result, total)
 }
 
+// GetOneUserById godoc
+// @Summary Get one user by id
+// @Tags User API
+// @Accept application/json
+// @Produce application/json
+// @Param id path string true "user id"
+// @Success 200 {object} apis.SuccessResponse{data=apis.UserResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/user/{id} [get]
 func (server *HttpServer) GetOneUserById(ctx *gin.Context) {
 	id, ok := server.BindID()
 	if !ok {
@@ -94,6 +124,17 @@ type UpdateOneUserByIdRequest struct {
 	Role     string `json:"role" binding:"required"`
 }
 
+// UpdateOneUserById godoc
+// @Summary Update one user by id
+// @Tags User API
+// @Accept application/json
+// @Produce application/json
+// @Param id path string true "user id"
+// @Param body body apis.UpdateOneUserByIdRequest true "Update user request"
+// @Success 200 {object} apis.SuccessResponse{data=apis.UserResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/user/{id} [patch]
 func (server *HttpServer) UpdateOneUserById(ctx *gin.Context) {
 	var req UpdateOneUserByIdRequest
 	if ok := server.BindJSON(&req); !ok {
@@ -122,6 +163,16 @@ func (server *HttpServer) UpdateOneUserById(ctx *gin.Context) {
 	server.OkResponse(rsp)
 }
 
+// DeleteOneUserById godoc
+// @Summary Delete one user by id
+// @Tags User API
+// @Accept application/json
+// @Produce application/json
+// @Param id path string true "user id"
+// @Success 200 {object} apis.SuccessResponse{data=apis.UserResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/user/{id} [delete]
 func (server *HttpServer) DeleteOneUserById(ctx *gin.Context) {
 	id, ok := server.BindID()
 	if !ok {

@@ -12,6 +12,16 @@ type LoginUserRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
+// LoginUser godoc
+// @Summary Login User
+// @Tags Auth API
+// @Accept application/json
+// @Produce application/json
+// @Param body body apis.LoginUserRequest true "Login user request"
+// @Success 200 {object} apis.SuccessResponse{data=apis.LoginUserResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/auth/user/login [post]
 func (server *HttpServer) LoginUser(ctx *gin.Context) {
 	var req LoginUserRequest
 	if ok := server.BindJSON(&req); !ok {

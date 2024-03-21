@@ -17,6 +17,16 @@ type CreateBookRequest struct {
 	PublicationDate time.Time `json:"publication_date" binding:"required"`
 }
 
+// CreateBook godoc
+// @Summary Create one book
+// @Tags Book API
+// @Accept application/json
+// @Produce application/json
+// @Param body body apis.CreateBookRequest true "Create book request"
+// @Success 200 {object} apis.SuccessResponse{data=apis.BookResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/book [post]
 func (server *HttpServer) CreateBook(ctx *gin.Context) {
 	var req CreateBookRequest
 	if ok := server.BindJSON(&req); !ok {
@@ -64,6 +74,16 @@ func (server *HttpServer) CreateBook(ctx *gin.Context) {
 	server.OkResponse(rsp)
 }
 
+// ListBook godoc
+// @Summary Get a list of books
+// @Tags Book API
+// @Accept application/json
+// @Produce application/json
+// @Param query query apis.SwaggerListRequest false "List query request"
+// @Success 200 {object} apis.PaginationResponse{data=[]apis.BookResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/book [get]
 func (server *HttpServer) ListBook(ctx *gin.Context) {
 	req := server.BindPagination()
 	if req == nil {
@@ -89,7 +109,7 @@ func (server *HttpServer) ListBook(ctx *gin.Context) {
 		return
 	}
 
-	result := []*BookResponse{}
+	var result []*BookResponse
 
 	for _, book := range books {
 		rsp, err := server.parseBookResponse(book)
@@ -104,6 +124,16 @@ func (server *HttpServer) ListBook(ctx *gin.Context) {
 	server.PaginatedResponse(req, result, total)
 }
 
+// GetOneBookById godoc
+// @Summary Get one book by id
+// @Tags Book API
+// @Accept application/json
+// @Produce application/json
+// @Param id path string true "book id"
+// @Success 200 {object} apis.SuccessResponse{data=apis.BookResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/book/{id} [get]
 func (server *HttpServer) GetOneBookById(ctx *gin.Context) {
 	id, ok := server.BindID()
 	if !ok {
@@ -132,6 +162,17 @@ type UpdateOneBookByIdRequest struct {
 	PublicationDate time.Time `json:"publication_date" binding:"required"`
 }
 
+// UpdateOneBookById godoc
+// @Summary Update one book by id
+// @Tags Book API
+// @Accept application/json
+// @Produce application/json
+// @Param id path string true "book id"
+// @Param body body apis.UpdateOneBookByIdRequest true "Update book request"
+// @Success 200 {object} apis.SuccessResponse{data=apis.BookResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/book/{id} [patch]
 func (server *HttpServer) UpdateOneBookById(ctx *gin.Context) {
 	var req UpdateOneBookByIdRequest
 	if ok := server.BindJSON(&req); !ok {
@@ -184,6 +225,16 @@ func (server *HttpServer) UpdateOneBookById(ctx *gin.Context) {
 	server.OkResponse(rsp)
 }
 
+// DeleteOneBookById godoc
+// @Summary Delete one book by id
+// @Tags Book API
+// @Accept application/json
+// @Produce application/json
+// @Param id path string true "book id"
+// @Success 200 {object} apis.SuccessResponse{data=apis.BookResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/book/{id} [delete]
 func (server *HttpServer) DeleteOneBookById(ctx *gin.Context) {
 	id, ok := server.BindID()
 	if !ok {
@@ -220,6 +271,16 @@ type BorrowBookResponse struct {
 	Borrower *db.Borrower `json:"borrower"`
 }
 
+// BorrowBook godoc
+// @Summary Borrow a book
+// @Tags Book API
+// @Accept application/json
+// @Produce application/json
+// @Param body body apis.BorrowBookRequest true "Borrow book request"
+// @Success 200 {object} apis.SuccessResponse{data=apis.BorrowBookResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/book/borrow [post]
 func (server *HttpServer) BorrowBook(ctx *gin.Context) {
 	var req BorrowBookRequest
 	if ok := server.BindJSON(&req); !ok {
@@ -315,6 +376,17 @@ func (server *HttpServer) BorrowBook(ctx *gin.Context) {
 	server.OkResponse(rsp)
 }
 
+// ListBookByBorrowerId godoc
+// @Summary Get list of books by borrowId
+// @Tags Book API
+// @Accept application/json
+// @Produce application/json
+// @Param id path string true "borrower id"
+// @Param query query apis.SwaggerListRequest false "List query request"
+// @Success 200 {object} apis.PaginationResponse{data=apis.BookResponse} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/book/borrow/{id} [get]
 func (server *HttpServer) ListBookByBorrowerId(ctx *gin.Context) {
 	borrowerID, ok := server.BindID()
 	if !ok {
@@ -350,7 +422,7 @@ func (server *HttpServer) ListBookByBorrowerId(ctx *gin.Context) {
 		return
 	}
 
-	result := []*BookResponse{}
+	var result []*BookResponse
 
 	for _, book := range books {
 		rsp, err := server.parseBookResponse(book)

@@ -5,6 +5,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type SwaggerListRequest struct {
+	Limit int64 `form:"limit"`
+	Page  int64 `form:"page"`
+}
+
 type ListRequest struct {
 	Limit  int64 `form:"limit"`
 	Page   int64 `form:"page"`

@@ -6,6 +6,17 @@ import (
 	"github.com/google/uuid"
 )
 
+// ListBorrowerByBookId godoc
+// @Summary Get list of borrowers by bookId
+// @Tags Borrower API
+// @Accept application/json
+// @Produce application/json
+// @Param id path string true "book id"
+// @Param query query apis.SwaggerListRequest false "List query request"
+// @Success 200 {object} apis.PaginationResponse{data=db.Borrower} "success"
+// @Failure 400 {object} apis.ExceptionResponse "client error"
+// @Failure 500 {object} apis.ExceptionResponse "database error"
+// @Router /v1/borrower/book/{id} [get]
 func (server *HttpServer) ListBorrowerByBookId(ctx *gin.Context) {
 	bookID, ok := server.BindID()
 	if !ok {

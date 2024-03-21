@@ -12,18 +12,25 @@ const (
 	SuccessMessage = "success"
 )
 
+type PaginatedResponse struct {
+	Limit int64 `json:"limit,omitempty"`
+	Page  int64 `json:"page,omitempty"`
+	Total int64 `json:"total,omitempty"`
+}
+
 type PaginationResponse struct {
-	Limit int64 `json:"limit"`
-	Page  int64 `json:"page"`
-	Total int64 `json:"total"`
+	StatusCode int                `json:"status_code,omitempty"`
+	Success    bool               `json:"success,omitempty"`
+	Message    string             `json:"message,omitempty"`
+	Data       interface{}        `json:"data,omitempty"`
+	Pagination *PaginatedResponse `json:"pagination,omitempty"`
 }
 
 type SuccessResponse struct {
-	StatusCode int                 `json:"status_code"`
-	Success    bool                `json:"success"`
-	Message    string              `json:"message"`
-	Data       interface{}         `json:"data"`
-	Pagination *PaginationResponse `json:"pagination"`
+	StatusCode int         `json:"status_code,omitempty"`
+	Success    bool        `json:"success,omitempty"`
+	Message    string      `json:"message,omitempty"`
+	Data       interface{} `json:"data,omitempty"`
 }
 
 func (server *HttpServer) Response(response *SuccessResponse) {
@@ -49,24 +56,25 @@ func (server *HttpServer) OkResponse(data interface{}) {
 }
 
 func (server *HttpServer) PaginatedResponse(req *ListRequest, data interface{}, total int64) {
-	pagination := &PaginationResponse{
+	pagination := &PaginatedResponse{
 		Limit: req.Limit,
 		Page:  req.Page,
 		Total: total,
 	}
-	server.Response(&SuccessResponse{
+	response := &PaginationResponse{
 		StatusCode: http.StatusOK,
 		Success:    true,
 		Message:    SuccessMessage,
 		Data:       data,
 		Pagination: pagination,
-	})
+	}
+	server.ctx.JSON(response.StatusCode, response)
 }
 
 type BookResponse struct {
-	Book     *db.Book     `json:"book"`
-	Category *db.Category `json:"category"`
-	BookInfo *db.BookInfo `json:"book_info"`
+	Book     *db.Book     `json:"book,omitempty"`
+	Category *db.Category `json:"category,omitempty"`
+	BookInfo *db.BookInfo `json:"book_info,omitempty"`
 }
 
 func (server *HttpServer) parseBookResponse(book *db.Book) (*BookResponse, error) {
@@ -87,13 +95,13 @@ func (server *HttpServer) parseBookResponse(book *db.Book) (*BookResponse, error
 }
 
 type UserResponse struct {
-	ID        uuid.UUID   `json:"id"`
-	Username  string      `json:"username"`
-	Role      db.RoleEnum `json:"role"`
-	CreatedAt time.Time   `json:"created_at"`
-	UpdatedAt time.Time   `json:"updated_at"`
-	DeletedAt *time.Time  `json:"deleted_at"`
-	IsActive  bool        `json:"is_active"`
+	ID        uuid.UUID   `json:"id,omitempty"`
+	Username  string      `json:"username,omitempty"`
+	Role      db.RoleEnum `json:"role,omitempty"`
+	CreatedAt time.Time   `json:"created_at,omitempty"`
+	UpdatedAt time.Time   `json:"updated_at,omitempty"`
+	DeletedAt *time.Time  `json:"deleted_at,omitempty"`
+	IsActive  bool        `json:"is_active,omitempty"`
 }
 
 func (server *HttpServer) parseUserResponse(user *db.User) *UserResponse {

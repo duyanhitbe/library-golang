@@ -17,11 +17,11 @@ const (
 )
 
 type ExceptionResponse struct {
-	StatusCode int                           `json:"status_code"`
-	Success    bool                          `json:"success"`
-	Message    string                        `json:"message"`
-	Error      string                        `json:"error"`
-	Errors     []validations.ValidationError `json:"errors"`
+	StatusCode int                           `json:"status_code,omitempty"`
+	Success    bool                          `json:"success,omitempty"`
+	Message    string                        `json:"message,omitempty"`
+	Error      string                        `json:"error,omitempty"`
+	Errors     []validations.ValidationError `json:"errors,omitempty"`
 }
 
 func (server *HttpServer) ThrowException(exception *ExceptionResponse) {

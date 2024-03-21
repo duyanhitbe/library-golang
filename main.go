@@ -6,7 +6,9 @@ import (
 
 	"github.com/duyanhitbe/library-golang/apis"
 	"github.com/duyanhitbe/library-golang/config"
+	_ "github.com/duyanhitbe/library-golang/docs"
 	"github.com/duyanhitbe/library-golang/token"
+	_ "github.com/go-openapi/jsonpointer"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -15,6 +17,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// @title Library App
+// @version 1.0
+// @description Library App using Golang
+// @host localhost:8080
 func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 

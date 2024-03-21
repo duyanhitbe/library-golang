@@ -1,0 +1,938 @@
+definitions:
+  apis.BookResponse:
+    properties:
+      book:
+        $ref: '#/definitions/db.Book'
+      book_info:
+        $ref: '#/definitions/db.BookInfo'
+      category:
+        $ref: '#/definitions/db.Category'
+    type: object
+  apis.BorrowBookRequest:
+    properties:
+      address:
+        type: string
+      book_id:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  apis.BorrowBookResponse:
+    properties:
+      book:
+        $ref: '#/definitions/db.Book'
+      book_info:
+        $ref: '#/definitions/db.BookInfo'
+      borrower:
+        $ref: '#/definitions/db.Borrower'
+      category:
+        $ref: '#/definitions/db.Category'
+    type: object
+  apis.CreateBookRequest:
+    properties:
+      author:
+        type: string
+      category_id:
+        type: string
+      name:
+        type: string
+      publication_date:
+        type: string
+    required:
+    - author
+    - category_id
+    - name
+    - publication_date
+    type: object
+  apis.CreateCategoryRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  apis.CreateUserRequest:
+    properties:
+      password:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - role
+    - username
+    type: object
+  apis.ExceptionResponse:
+    properties:
+      error:
+        type: string
+      errors:
+        items:
+          $ref: '#/definitions/validations.ValidationError'
+        type: array
+      message:
+        type: string
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  apis.LoginUserRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  apis.LoginUserResponse:
+    properties:
+      access_token:
+        type: string
+      access_token_exp:
+        type: string
+      access_token_iat:
+        type: string
+    type: object
+  apis.PaginatedResponse:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  apis.PaginationResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      pagination:
+        $ref: '#/definitions/apis.PaginatedResponse'
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  apis.SuccessResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  apis.UpdateOneBookByIdRequest:
+    properties:
+      author:
+        type: string
+      category_id:
+        type: string
+      name:
+        type: string
+      publication_date:
+        type: string
+    required:
+    - author
+    - category_id
+    - name
+    - publication_date
+    type: object
+  apis.UpdateOneCategoryByIdRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  apis.UpdateOneUserByIdRequest:
+    properties:
+      role:
+        type: string
+      username:
+        type: string
+    required:
+    - role
+    - username
+    type: object
+  apis.UserResponse:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      role:
+        $ref: '#/definitions/db.RoleEnum'
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  db.Book:
+    properties:
+      book_info_id:
+        type: string
+      category_id:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      updated_at:
+        type: string
+    type: object
+  db.BookInfo:
+    properties:
+      author:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      publication_date:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  db.Borrower:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      phone:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  db.Category:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  db.RoleEnum:
+    enum:
+    - ADMIN
+    - MANAGER
+    type: string
+    x-enum-varnames:
+    - RoleEnumADMIN
+    - RoleEnumMANAGER
+  validations.ValidationError:
+    properties:
+      error:
+        type: string
+      field:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Library App using Golang
+  title: Library App
+  version: "1.0"
+paths:
+  /v1/auth/user/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login user request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/apis.LoginUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/apis.LoginUserResponse'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Login User
+      tags:
+      - Auth API
+  /v1/book:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.PaginationResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/apis.BookResponse'
+                  type: array
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Get a list of books
+      tags:
+      - Book API
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Create book request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/apis.CreateBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/apis.BookResponse'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Create one book
+      tags:
+      - Book API
+  /v1/book/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: book id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/apis.BookResponse'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Delete one book by id
+      tags:
+      - Book API
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: book id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/apis.BookResponse'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Get one book by id
+      tags:
+      - Book API
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: book id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update book request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/apis.UpdateOneBookByIdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/apis.BookResponse'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Update one book by id
+      tags:
+      - Book API
+  /v1/book/borrow:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Borrow book request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/apis.BorrowBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/apis.BorrowBookResponse'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Borrow a book
+      tags:
+      - Book API
+  /v1/book/borrow/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: borrower id
+        in: path
+        name: id
+        required: true
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.PaginationResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/apis.BookResponse'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Get list of books by borrowId
+      tags:
+      - Book API
+  /v1/borrower/book/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: book id
+        in: path
+        name: id
+        required: true
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.PaginationResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/db.Borrower'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Get list of borrowers by bookId
+      tags:
+      - Borrower API
+  /v1/category:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.PaginationResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/db.Category'
+                  type: array
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Get a list of categories
+      tags:
+      - Category API
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Create category request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/apis.CreateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/db.Category'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Create one category
+      tags:
+      - Category API
+  /v1/category/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/db.Category'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Delete one category by id
+      tags:
+      - Category API
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/db.Category'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Get one category by id
+      tags:
+      - Category API
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update category request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/apis.UpdateOneCategoryByIdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/db.Category'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Update one category by id
+      tags:
+      - Category API
+  /v1/user:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.PaginationResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/apis.UserResponse'
+                  type: array
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Get a list of users
+      tags:
+      - User API
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Create user request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/apis.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/apis.UserResponse'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Create one user
+      tags:
+      - User API
+  /v1/user/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/apis.UserResponse'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Delete one user by id
+      tags:
+      - User API
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/apis.UserResponse'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Get one user by id
+      tags:
+      - User API
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update user request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/apis.UpdateOneUserByIdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/apis.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/apis.UserResponse'
+              type: object
+        "400":
+          description: client error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/apis.ExceptionResponse'
+      summary: Update one user by id
+      tags:
+      - User API
+swagger: "2.0"
