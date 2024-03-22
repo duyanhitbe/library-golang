@@ -15,6 +15,7 @@ type CreateCategoryRequest struct {
 // @Accept application/json
 // @Produce application/json
 // @Param body body apis.CreateCategoryRequest true "Create category request"
+// @Security BearerAuth
 // @Success 200 {object} apis.SuccessResponse{data=db.Category} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
@@ -111,6 +112,7 @@ type UpdateOneCategoryByIdRequest struct {
 // @Produce application/json
 // @Param id path string true "category id"
 // @Param body body apis.UpdateOneCategoryByIdRequest true "Update category request"
+// @Security BearerAuth
 // @Success 200 {object} apis.SuccessResponse{data=db.Category} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
@@ -147,6 +149,7 @@ func (server *HttpServer) UpdateOneCategoryById(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param id path string true "category id"
+// @Security BearerAuth
 // @Success 200 {object} apis.SuccessResponse{data=db.Category} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"

@@ -373,6 +373,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Create one book
       tags:
       - Book API
@@ -406,6 +408,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Delete one book by id
       tags:
       - Book API
@@ -476,6 +480,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Update one book by id
       tags:
       - Book API
@@ -510,6 +516,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Borrow a book
       tags:
       - Book API
@@ -549,6 +557,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Get list of books by borrowId
       tags:
       - Book API
@@ -588,6 +598,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Get list of borrowers by bookId
       tags:
       - Borrower API
@@ -657,6 +669,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Create one category
       tags:
       - Category API
@@ -690,6 +704,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Delete one category by id
       tags:
       - Category API
@@ -760,6 +776,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Update one category by id
       tags:
       - Category API
@@ -796,6 +814,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Get a list of users
       tags:
       - User API
@@ -829,6 +849,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Create one user
       tags:
       - User API
@@ -862,6 +884,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Delete one user by id
       tags:
       - User API
@@ -894,6 +918,8 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Get one user by id
       tags:
       - User API
@@ -932,7 +958,14 @@ paths:
           description: database error
           schema:
             $ref: '#/definitions/apis.ExceptionResponse'
+      security:
+      - BearerAuth: []
       summary: Update one user by id
       tags:
       - User API
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -21,6 +21,9 @@ import (
 // @version 1.0
 // @description Library App using Golang
 // @host localhost:8080
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
@@ -79,5 +82,7 @@ func startHttpServer(db *sql.DB, env *config.Env) error {
 	server := apis.NewHttpServer(env, db, tokenMaker)
 
 	//Start the server
+	log.Info().Msg("Server start successfully")
+	log.Info().Msgf("Swagger: http://%s/docs/index.html", env.HttpServerAddress)
 	return server.Start()
 }

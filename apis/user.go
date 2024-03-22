@@ -17,6 +17,7 @@ type CreateUserRequest struct {
 // @Accept application/json
 // @Produce application/json
 // @Param body body apis.CreateUserRequest true "Create user request"
+// @Security BearerAuth
 // @Success 200 {object} apis.SuccessResponse{data=apis.UserResponse} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
@@ -52,6 +53,7 @@ func (server *HttpServer) CreateUser(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param query query apis.SwaggerListRequest false "List query request"
+// @Security BearerAuth
 // @Success 200 {object} apis.PaginationResponse{data=[]apis.UserResponse} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
@@ -96,6 +98,7 @@ func (server *HttpServer) ListUser(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param id path string true "user id"
+// @Security BearerAuth
 // @Success 200 {object} apis.SuccessResponse{data=apis.UserResponse} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
@@ -131,6 +134,7 @@ type UpdateOneUserByIdRequest struct {
 // @Produce application/json
 // @Param id path string true "user id"
 // @Param body body apis.UpdateOneUserByIdRequest true "Update user request"
+// @Security BearerAuth
 // @Success 200 {object} apis.SuccessResponse{data=apis.UserResponse} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
@@ -169,6 +173,7 @@ func (server *HttpServer) UpdateOneUserById(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param id path string true "user id"
+// @Security BearerAuth
 // @Success 200 {object} apis.SuccessResponse{data=apis.UserResponse} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"

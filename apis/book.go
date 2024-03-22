@@ -2,6 +2,7 @@ package apis
 
 import (
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/duyanhitbe/library-golang/db"
@@ -23,6 +24,7 @@ type CreateBookRequest struct {
 // @Accept application/json
 // @Produce application/json
 // @Param body body apis.CreateBookRequest true "Create book request"
+// @Security BearerAuth
 // @Success 200 {object} apis.SuccessResponse{data=apis.BookResponse} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
@@ -121,6 +123,10 @@ func (server *HttpServer) ListBook(ctx *gin.Context) {
 		result = append(result, rsp)
 	}
 
+	if result == nil {
+		result = []*BookResponse{}
+	}
+
 	server.PaginatedResponse(req, result, total)
 }
 
@@ -169,6 +175,7 @@ type UpdateOneBookByIdRequest struct {
 // @Produce application/json
 // @Param id path string true "book id"
 // @Param body body apis.UpdateOneBookByIdRequest true "Update book request"
+// @Security BearerAuth
 // @Success 200 {object} apis.SuccessResponse{data=apis.BookResponse} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
@@ -231,6 +238,7 @@ func (server *HttpServer) UpdateOneBookById(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param id path string true "book id"
+// @Security BearerAuth
 // @Success 200 {object} apis.SuccessResponse{data=apis.BookResponse} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
@@ -277,6 +285,7 @@ type BorrowBookResponse struct {
 // @Accept application/json
 // @Produce application/json
 // @Param body body apis.BorrowBookRequest true "Borrow book request"
+// @Security BearerAuth
 // @Success 200 {object} apis.SuccessResponse{data=apis.BorrowBookResponse} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
@@ -304,7 +313,7 @@ func (server *HttpServer) BorrowBook(ctx *gin.Context) {
 	//If exist borrower, update borrower info
 	borrower, err := server.store.GetOneBorrowerByPhone(ctx, req.Phone)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			borrower, err = server.store.CreateBorrower(ctx, db.CreateBorrowerParams{
 				Name:    req.Name,
 				Phone:   req.Phone,
@@ -342,7 +351,7 @@ func (server *HttpServer) BorrowBook(ctx *gin.Context) {
 		BookID:     book.ID,
 	})
 	if err != nil {
-		if err != sql.ErrNoRows {
+		if !errors.Is(err, sql.ErrNoRows) {
 			server.ThrowDbException(DbException{
 				Err: err,
 			})
@@ -383,6 +392,7 @@ func (server *HttpServer) BorrowBook(ctx *gin.Context) {
 // @Produce application/json
 // @Param id path string true "borrower id"
 // @Param query query apis.SwaggerListRequest false "List query request"
+// @Security BearerAuth
 // @Success 200 {object} apis.PaginationResponse{data=apis.BookResponse} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
@@ -405,7 +415,7 @@ func (server *HttpServer) ListBookByBorrowerId(ctx *gin.Context) {
 		})
 		return
 	}
-	bookIds := []uuid.UUID{}
+	var bookIds []uuid.UUID
 	for _, bookBorrower := range bookBorrowers {
 		bookIds = append(bookIds, bookBorrower.BookID)
 	}

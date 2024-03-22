@@ -13,6 +13,7 @@ import (
 // @Produce application/json
 // @Param id path string true "book id"
 // @Param query query apis.SwaggerListRequest false "List query request"
+// @Security BearerAuth
 // @Success 200 {object} apis.PaginationResponse{data=db.Borrower} "success"
 // @Failure 400 {object} apis.ExceptionResponse "client error"
 // @Failure 500 {object} apis.ExceptionResponse "database error"
